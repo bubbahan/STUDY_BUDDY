@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - StudyBuddy</title>
-
     <link rel="stylesheet" href="css/style.css">
-
     <style>
         body {
             margin: 0;
@@ -23,7 +22,7 @@
             padding: 30px;
             border-radius: 10px;
             width: 350px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         h2 {
@@ -39,6 +38,7 @@
             border-radius: 5px;
             border: 1px solid #ccc;
             font-size: 14px;
+            box-sizing: border-box;
         }
 
         button {
@@ -71,62 +71,54 @@
             color: red;
             text-align: center;
             margin-top: 10px;
+            min-height: 20px;
         }
     </style>
 </head>
 
 <body>
 
-<div class="login-container">
-    <h2>StudyBuddy Login</h2>
+    <div class="login-container">
+        <h2>📚 StudyBuddy</h2>
 
-    <form id="loginForm">
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Password" required>
+        <form id="loginForm" onsubmit="event.preventDefault(); loginUser();">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
 
-        <button type="submit">Login</button>
-    </form>
+        <div class="error" id="errorMsg"></div>
 
-    <div class="error" id="errorMsg"></div>
-
-    <div class="register-link">
-        Don't have an account?
-        <a href="register.html">Register</a>
+        <div class="register-link">
+            Don't have an account? <a href="register.html">Register</a>
+        </div>
     </div>
-</div>
 
-<script>
-    const BASE_URL = "http://127.0.0.1:5000";
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Validate token before trusting it (prevents stale-token redirect loops)
+        (async function checkExistingSession() {
+            const token = localStorage.getItem("token");
+            if (!token) return; // No token → stay on login page
 
-    document.getElementById("loginForm").addEventListener("submit", async function(e) {
-        e.preventDefault();
-
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-
-        try {
-            const response = await fetch(`${BASE_URL}/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email, password })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("Login Successful!");
-                window.location.href = "dashboard.html";
-            } else {
-                document.getElementById("errorMsg").innerText = data.message;
+            try {
+                const res = await fetch(`${BASE_URL}/api/analytics/dashboard`, {
+                    headers: { "Authorization": "Bearer " + token }
+                });
+                if (res.ok) {
+                    // Token is still valid → go to dashboard
+                    window.location.href = "dashboard.html";
+                } else {
+                    // Token is stale → clear it and stay on login page
+                    localStorage.clear();
+                }
+            } catch (e) {
+                // Server unreachable → stay on login page (don't clear token)
             }
-
-        } catch (error) {
-            document.getElementById("errorMsg").innerText = "Server error";
-        }
-    });
-</script>
+        })();
+    </script>
 
 </body>
+
 </html>

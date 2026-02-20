@@ -1,29 +1,314 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Gamification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamification - StudyBuddy</title>
     <style>
-        body { font-family: Arial; text-align: center; background:#f4f6f8; }
-        nav a { margin:10px; text-decoration:none; font-weight:bold; }
-        .card { background:white; padding:20px; margin:20px auto; width:60%; border-radius:10px; }
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background: #4e73df;
+            color: white;
+            position: fixed;
+            padding-top: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #2e59d9;
+        }
+
+        .logout {
+            cursor: pointer;
+        }
+
+        .main {
+            margin-left: 220px;
+            padding: 24px;
+        }
+
+        h2 {
+            color: #4e73df;
+            margin-bottom: 20px;
+        }
+
+        .gamif-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .gcard {
+            background: white;
+            padding: 24px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .gcard .icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .gcard .label {
+            font-size: 13px;
+            color: #777;
+        }
+
+        .gcard .value {
+            font-size: 30px;
+            font-weight: bold;
+            color: #4e73df;
+            margin: 4px 0;
+        }
+
+        /* Level badge */
+        .level-ring {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 6px solid #4e73df;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+        }
+
+        .level-ring .lvl-num {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4e73df;
+            line-height: 1;
+        }
+
+        .level-ring .lvl-lbl {
+            font-size: 10px;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        /* XP bar */
+        .xp-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .xp-section h3 {
+            margin: 0 0 10px;
+            color: #4e73df;
+        }
+
+        .xp-bar-wrap {
+            background: #eee;
+            border-radius: 6px;
+            height: 12px;
+        }
+
+        .xp-bar-fill {
+            height: 12px;
+            background: linear-gradient(90deg, #4e73df, #6f9cff);
+            border-radius: 6px;
+            transition: width 0.5s;
+        }
+
+        .xp-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        /* Badges */
+        .badges-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .badges-section h3 {
+            margin: 0 0 14px;
+            color: #4e73df;
+        }
+
+        .badges-row {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .badge-item {
+            text-align: center;
+            background: #f0f4ff;
+            border-radius: 10px;
+            padding: 14px 18px;
+            min-width: 80px;
+        }
+
+        .badge-item .bi {
+            font-size: 26px;
+        }
+
+        .badge-item .bname {
+            font-size: 11px;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .badge-item.locked {
+            opacity: 0.35;
+            filter: grayscale(1);
+        }
     </style>
 </head>
+
 <body>
 
-<h1>🎮 Gamification Dashboard</h1>
+    <div class="sidebar">
+        <h2>📚 StudyBuddy</h2>
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="timetable.html">📅 Timetable</a>
+        <a href="session.html">⏱ Study Session</a>
+        <a href="progress.html">📊 Progress</a>
+        <a href="courses.html">📚 Courses</a>
+        <a href="weak.html">⚠️ Weak Areas</a>
+        <a href="gamification.html" class="active">🎮 Gamification</a>
+        <a href="settings.html">⚙️ Settings</a>
+        <a class="logout" onclick="logout()">🚪 Logout</a>
+    </div>
 
-<nav>
-    <a href="courses.html">Courses</a>
-    <a href="completion.html">Completion</a>
-    <a href="settings.html">Settings</a>
-</nav>
+    <div class="main">
+        <h2>🎮 Gamification Dashboard</h2>
 
-<div class="card">
-    <h3>Your Points</h3>
-    <p>⭐ 250 XP</p>
-    <p>🏆 Level 3 Achieved</p>
-</div>
+        <div class="gamif-grid">
+            <div class="gcard">
+                <div class="level-ring">
+                    <div class="lvl-num" id="level">—</div>
+                    <div class="lvl-lbl">Level</div>
+                </div>
+                <div class="label">Current Level</div>
+            </div>
+            <div class="gcard">
+                <div class="icon">⭐</div>
+                <div class="value" id="xp">—</div>
+                <div class="label">XP Earned</div>
+            </div>
+            <div class="gcard">
+                <div class="icon">🔥</div>
+                <div class="value" id="streak">—</div>
+                <div class="label">Day Streak</div>
+            </div>
+            <div class="gcard">
+                <div class="icon">📝</div>
+                <div class="value" id="sessions">—</div>
+                <div class="label">Sessions Completed</div>
+            </div>
+        </div>
+
+        <div class="xp-section">
+            <h3>⭐ XP Progress to Next Level</h3>
+            <div class="xp-bar-wrap">
+                <div class="xp-bar-fill" id="xpBar" style="width: 0%"></div>
+            </div>
+            <div class="xp-labels">
+                <span id="xpCurrent">0 XP</span>
+                <span id="xpNext">100 XP to next level</span>
+            </div>
+        </div>
+
+        <div class="badges-section">
+            <h3>🏅 Badges</h3>
+            <div class="badges-row" id="badgesRow">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        requireAuth();
+
+        const BADGES = [
+            { icon: "🌟", name: "First Session", minSessions: 1 },
+            { icon: "🔥", name: "3-Day Streak", minStreak: 3 },
+            { icon: "💪", name: "10 Sessions", minSessions: 10 },
+            { icon: "🏆", name: "Level 5", minLevel: 5 },
+            { icon: "📚", name: "50 Sessions", minSessions: 50 },
+            { icon: "⚡", name: "7-Day Streak", minStreak: 7 }
+        ];
+
+        async function loadGamification() {
+            const data = await getDashboardData();
+            if (!data._ok) return;
+
+            const level = data.level ?? 1;
+            const xp = data.xp ?? 0;
+            const streak = data.streak ?? 0;
+            const sessions = data.total_sessions ?? 0;
+
+            document.getElementById("level").innerText = level;
+            document.getElementById("xp").innerText = xp;
+            document.getElementById("streak").innerText = streak + " days";
+            document.getElementById("sessions").innerText = sessions;
+
+            // XP bar: each level needs level*100 XP
+            const xpThisLevel = level * 100;
+            const xpInLevel = xp % xpThisLevel;
+            const pct = Math.min(Math.round((xpInLevel / xpThisLevel) * 100), 100);
+            document.getElementById("xpBar").style.width = pct + "%";
+            document.getElementById("xpCurrent").innerText = xpInLevel + " XP";
+            document.getElementById("xpNext").innerText = (xpThisLevel - xpInLevel) + " XP to next level";
+
+            // Badges
+            const row = document.getElementById("badgesRow");
+            row.innerHTML = BADGES.map(b => {
+                const earned =
+                    (b.minSessions && sessions >= b.minSessions) ||
+                    (b.minStreak && streak >= b.minStreak) ||
+                    (b.minLevel && level >= b.minLevel);
+                return `<div class="badge-item ${earned ? "" : "locked"}">
+                <div class="bi">${b.icon}</div>
+                <div class="bname">${b.name}</div>
+            </div>`;
+            }).join("");
+        }
+
+        loadGamification();
+    </script>
 
 </body>
+
 </html>

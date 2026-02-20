@@ -1,27 +1,407 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - StudyBuddy</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        /* ---- Sidebar ---- */
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background: #4e73df;
+            color: white;
+            position: fixed;
+            padding-top: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #2e59d9;
+        }
+
+        .sidebar .logout {
+            cursor: pointer;
+        }
+
+        /* ---- Main ---- */
+        .main {
+            margin-left: 220px;
+            padding: 24px;
+        }
+
+        h2 {
+            color: #4e73df;
+            margin-bottom: 20px;
+        }
+
+        /* ---- Settings Card ---- */
+        .settings-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            max-width: 560px;
+        }
+
+        .settings-card h3 {
+            margin: 0 0 20px;
+            color: #4e73df;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #444;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #4e73df;
+        }
+
+        input:disabled {
+            background: #f9f9f9;
+            color: #999;
+        }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .btn-save {
+            padding: 11px 28px;
+            background: #4e73df;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-top: 8px;
+        }
+
+        .btn-save:hover {
+            background: #2e59d9;
+        }
+
+        .btn-save:disabled {
+            background: #aaa;
+            cursor: default;
+        }
+
+        #msg {
+            margin-top: 12px;
+            font-size: 14px;
+            min-height: 18px;
+        }
+
+        /* ---- Section divider ---- */
+        .divider {
+            border: none;
+            border-top: 1px solid #eee;
+            margin: 28px 0;
+        }
+
+        .password-section h3 {
+            color: #e74c3c;
+        }
+
+        .btn-pwd {
+            padding: 10px 22px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .btn-pwd:hover {
+            background: #c0392b;
+        }
+
+        #pwdMsg {
+            margin-top: 10px;
+            font-size: 14px;
+            min-height: 18px;
+        }
+
+        /* ---- Profile Avatar ---- */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            background: #4e73df;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .profile-meta h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .profile-meta p {
+            margin: 4px 0 0;
+            color: #777;
+            font-size: 13px;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>⚙ Settings</h1>
+    <div class="sidebar">
+        <h2>📚 StudyBuddy</h2>
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="timetable.html">📅 Timetable</a>
+        <a href="session.html">⏱ Study Session</a>
+        <a href="progress.html">📊 Progress</a>
+        <a href="courses.html">📚 Courses</a>
+        <a href="weak.html">⚠️ Weak Areas</a>
+        <a href="gamification.html">🎮 Gamification</a>
+        <a href="settings.html" class="active">⚙️ Settings</a>
+        <a class="logout" onclick="logout()">🚪 Logout</a>
+    </div>
 
-<a href="gamification.html">⬅ Back</a>
+    <div class="main">
+        <h2>⚙️ Settings</h2>
 
-<form>
-    <label>Name:</label><br>
-    <input type="text" placeholder="Enter name"><br><br>
+        <!-- Profile Section -->
+        <div class="settings-card" id="profileCard">
+            <div class="profile-header">
+                <div class="avatar" id="avatarInitial">?</div>
+                <div class="profile-meta">
+                    <h3 id="profileName">Loading...</h3>
+                    <p id="profileEmail">—</p>
+                </div>
+            </div>
+            <h3>Study Preferences</h3>
 
-    <label>Email:</label><br>
-    <input type="email" placeholder="Enter email"><br><br>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="settingName" placeholder="Your name">
+            </div>
 
-    <label>Dark Mode:</label>
-    <input type="checkbox"><br><br>
+            <div class="form-group">
+                <label>Email (read-only)</label>
+                <input type="email" id="settingEmail" disabled>
+            </div>
 
-    <button type="submit">Save</button>
-</form>
+            <div class="row-2">
+                <div class="form-group">
+                    <label>Study Hours / Day</label>
+                    <input type="number" id="settingHours" min="1" max="16" placeholder="e.g. 4">
+                </div>
+                <div class="form-group">
+                    <label>Study Preference</label>
+                    <select id="settingPreference">
+                        <option value="morning">Morning</option>
+                        <option value="night">Night</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row-2">
+                <div class="form-group">
+                    <label>Sleep Time</label>
+                    <input type="time" id="settingSleep">
+                </div>
+                <div class="form-group">
+                    <label>Wake Up Time</label>
+                    <input type="time" id="settingWake">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Exam Date</label>
+                <input type="date" id="settingExam">
+            </div>
+
+            <div id="msg"></div>
+            <button class="btn-save" id="saveBtn" onclick="saveSettings()">💾 Save Changes</button>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Password Section -->
+        <div class="settings-card password-section" style="margin-top:0;">
+            <h3>🔒 Change Password</h3>
+
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" id="newPwd" placeholder="Enter new password">
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" id="confirmPwd" placeholder="Confirm new password">
+            </div>
+
+            <div id="pwdMsg"></div>
+            <button class="btn-pwd" onclick="changePassword()">🔒 Update Password</button>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        requireAuth();
+
+        // Load profile from backend
+        async function loadProfile() {
+            const data = await apiRequest("/api/user/profile", "GET", null, true);
+            if (!data._ok) return;
+
+            document.getElementById("profileName").innerText = data.name || "User";
+            document.getElementById("profileEmail").innerText = data.email || "";
+            document.getElementById("avatarInitial").innerText = (data.name || "U")[0].toUpperCase();
+
+            document.getElementById("settingName").value = data.name || "";
+            document.getElementById("settingEmail").value = data.email || "";
+            document.getElementById("settingHours").value = data.study_hours_per_day || 4;
+            document.getElementById("settingPreference").value = data.preference || "morning";
+            document.getElementById("settingSleep").value = data.sleep_time || "23:00";
+            document.getElementById("settingWake").value = data.wake_time || "07:00";
+            if (data.exam_date) {
+                document.getElementById("settingExam").value = data.exam_date;
+            }
+        }
+
+        // Save settings — re-registers the update via auth register fields
+        // Since there's no dedicated update endpoint, we show the changes locally
+        // and store study preferences in localStorage for now.
+        async function saveSettings() {
+            const name = document.getElementById("settingName").value.trim();
+            const hours = document.getElementById("settingHours").value;
+            const preference = document.getElementById("settingPreference").value;
+            const sleep = document.getElementById("settingSleep").value;
+            const wake = document.getElementById("settingWake").value;
+            const exam = document.getElementById("settingExam").value;
+            const msgEl = document.getElementById("msg");
+            const btn = document.getElementById("saveBtn");
+
+            if (!name) {
+                msgEl.style.color = "red";
+                msgEl.innerText = "Name cannot be empty.";
+                return;
+            }
+
+            btn.disabled = true;
+            msgEl.style.color = "#333";
+            msgEl.innerText = "Saving...";
+
+            // Hit the update profile endpoint (we'll add it if missing)
+            const res = await apiRequest("/api/user/update", "PUT", {
+                name,
+                study_hours_per_day: parseInt(hours),
+                preference,
+                sleep_time: sleep,
+                wake_time: wake,
+                exam_date: exam || null
+            }, true);
+
+            if (res._ok) {
+                localStorage.setItem("name", name);
+                document.getElementById("profileName").innerText = name;
+                document.getElementById("avatarInitial").innerText = name[0].toUpperCase();
+                msgEl.style.color = "#28a745";
+                msgEl.innerText = "✅ Settings saved!";
+            } else {
+                msgEl.style.color = "red";
+                msgEl.innerText = "❌ " + (res.message || "Failed to save.");
+            }
+            btn.disabled = false;
+        }
+
+        async function changePassword() {
+            const newPwd = document.getElementById("newPwd").value;
+            const confirm = document.getElementById("confirmPwd").value;
+            const msg = document.getElementById("pwdMsg");
+
+            if (!newPwd || newPwd.length < 6) {
+                msg.style.color = "red";
+                msg.innerText = "Password must be at least 6 characters.";
+                return;
+            }
+            if (newPwd !== confirm) {
+                msg.style.color = "red";
+                msg.innerText = "Passwords do not match.";
+                return;
+            }
+
+            const res = await apiRequest("/api/user/change-password", "POST", { password: newPwd }, true);
+            if (res._ok) {
+                msg.style.color = "#28a745";
+                msg.innerText = "✅ Password updated!";
+                document.getElementById("newPwd").value = "";
+                document.getElementById("confirmPwd").value = "";
+            } else {
+                msg.style.color = "red";
+                msg.innerText = "❌ " + (res.message || "Failed.");
+            }
+        }
+
+        loadProfile();
+    </script>
 
 </body>
+
 </html>

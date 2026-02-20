@@ -1,24 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Alarm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Alarm - StudyBuddy</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background: #4e73df;
+            color: white;
+            position: fixed;
+            padding-top: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #2e59d9;
+        }
+
+        .logout {
+            cursor: pointer;
+        }
+
+        .main {
+            margin-left: 220px;
+            padding: 24px;
+        }
+
+        h2 {
+            color: #4e73df;
+            margin-bottom: 20px;
+        }
+
+        .alarm-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            max-width: 440px;
+        }
+
+        .alarm-card h3 {
+            margin: 0 0 20px;
+            color: #4e73df;
+        }
+
+        .clock-display {
+            font-size: 52px;
+            font-weight: bold;
+            text-align: center;
+            color: #4e73df;
+            letter-spacing: 2px;
+            margin: 18px 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #444;
+        }
+
+        input[type="time"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: white;
+        }
+
+        .btn-set {
+            background: #4e73df;
+        }
+
+        .btn-set:hover {
+            background: #2e59d9;
+        }
+
+        .btn-clear {
+            background: #6c757d;
+        }
+
+        .btn-clear:hover {
+            background: #5a6268;
+        }
+
+        .alarm-list {
+            margin-top: 20px;
+        }
+
+        .alarm-list h4 {
+            color: #4e73df;
+            margin-bottom: 10px;
+        }
+
+        .alarm-item {
+            background: #f0f4ff;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #e74c3c;
+            font-size: 16px;
+            padding: 0 4px;
+        }
+
+        #alarmStatus {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            min-height: 18px;
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1>⏰ Alarm</h1>
+    <div class="sidebar">
+        <h2>📚 StudyBuddy</h2>
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="timetable.html">📅 Timetable</a>
+        <a href="session.html">⏱ Study Session</a>
+        <a href="progress.html">📊 Progress</a>
+        <a href="courses.html">📚 Courses</a>
+        <a href="weak.html">⚠️ Weak Areas</a>
+        <a href="gamification.html">🎮 Gamification</a>
+        <a href="settings.html">⚙️ Settings</a>
+        <a class="logout" onclick="logout()">🚪 Logout</a>
+    </div>
 
-    <a href="timetable.html">⬅ Back to Timetable</a>
+    <div class="main">
+        <h2>⏰ Study Alarm</h2>
 
-    <input type="time" id="alarmTime">
-    <button onclick="setAlarm()">Set Alarm</button>
+        <div class="alarm-card">
+            <h3>Set a Study Reminder</h3>
 
+            <div class="clock-display" id="currentTime">--:--:--</div>
+
+            <div class="form-group">
+                <label>Alarm Time</label>
+                <input type="time" id="alarmTime">
+            </div>
+
+            <div class="form-group">
+                <label>Label (optional)</label>
+                <input type="text" id="alarmLabel" placeholder="e.g. Start Math session">
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-set" onclick="setAlarm()">⏰ Set Alarm</button>
+                <button class="btn btn-clear" onclick="clearAll()">🗑 Clear All</button>
+            </div>
+
+            <div id="alarmStatus"></div>
+
+            <div class="alarm-list" id="alarmList" style="display:none;">
+                <h4>Active Alarms</h4>
+                <div id="alarmsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
     <script>
-        function setAlarm() {
-            let time = document.getElementById("alarmTime").value;
-            alert("Alarm set for " + time);
+        requireAuth();
+
+        let alarms = JSON.parse(localStorage.getItem("studyAlarms") || "[]");
+        let alarmInterval;
+
+        // Live clock
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, "0");
+            const m = String(now.getMinutes()).padStart(2, "0");
+            const s = String(now.getSeconds()).padStart(2, "0");
+            document.getElementById("currentTime").innerText = `${h}:${m}:${s}`;
+
+            // Check alarms
+            const hm = `${h}:${m}`;
+            alarms.forEach(a => {
+                if (a.time === hm && !a.fired) {
+                    a.fired = true;
+                    saveAlarms();
+                    const label = a.label ? `\n📌 ${a.label}` : "";
+                    alert(`⏰ Study Alarm!${label}\n\nTime to study!`);
+                }
+            });
         }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        function saveAlarms() {
+            localStorage.setItem("studyAlarms", JSON.stringify(alarms));
+        }
+
+        function setAlarm() {
+            const time = document.getElementById("alarmTime").value;
+            const label = document.getElementById("alarmLabel").value.trim();
+            const status = document.getElementById("alarmStatus");
+
+            if (!time) {
+                status.style.color = "red";
+                status.innerText = "Please select a time.";
+                return;
+            }
+
+            alarms.push({ time, label, fired: false });
+            saveAlarms();
+            renderAlarms();
+
+            status.style.color = "#28a745";
+            status.innerText = `✅ Alarm set for ${time}${label ? " — " + label : ""}`;
+            document.getElementById("alarmTime").value = "";
+            document.getElementById("alarmLabel").value = "";
+        }
+
+        function removeAlarm(idx) {
+            alarms.splice(idx, 1);
+            saveAlarms();
+            renderAlarms();
+        }
+
+        function clearAll() {
+            alarms = [];
+            saveAlarms();
+            renderAlarms();
+            document.getElementById("alarmStatus").innerText = "";
+        }
+
+        function renderAlarms() {
+            const container = document.getElementById("alarmsContainer");
+            const listSection = document.getElementById("alarmList");
+
+            if (alarms.length === 0) {
+                listSection.style.display = "none";
+                return;
+            }
+
+            listSection.style.display = "block";
+            container.innerHTML = alarms.map((a, i) => `
+            <div class="alarm-item">
+                <span>🕐 <strong>${a.time}</strong>${a.label ? " — " + a.label : ""}${a.fired ? " ✅" : ""}</span>
+                <button class="remove-btn" onclick="removeAlarm(${i})" title="Remove">✕</button>
+            </div>
+        `).join("");
+        }
+
+        renderAlarms();
     </script>
 
 </body>
+
 </html>

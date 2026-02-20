@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - StudyBuddy</title>
-
     <style>
         body {
             margin: 0;
@@ -12,7 +12,6 @@
             background: #f4f7fb;
         }
 
-        /* Sidebar */
         .sidebar {
             width: 220px;
             height: 100vh;
@@ -38,7 +37,10 @@
             background: #2e59d9;
         }
 
-        /* Main */
+        .sidebar .logout {
+            cursor: pointer;
+        }
+
         .main {
             margin-left: 220px;
             padding: 20px;
@@ -49,12 +51,15 @@
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
         }
 
@@ -62,128 +67,236 @@
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
         }
 
         .card h3 {
-            margin: 0;
+            margin: 0 0 8px;
             color: #4e73df;
+            font-size: 14px;
         }
 
-        .timetable {
+        .card p {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .stress-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            color: white;
+        }
+
+        .stress-Low {
+            background: #28a745;
+        }
+
+        .stress-Medium {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .stress-High {
+            background: #dc3545;
+        }
+
+        .timetable-section {
             margin-top: 20px;
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
         }
 
-        button {
-            padding: 10px 15px;
+        .timetable-section h3 {
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f0f4ff;
+            color: #4e73df;
+            font-size: 13px;
+        }
+
+        .btn {
+            padding: 10px 18px;
             background: #4e73df;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 14px;
         }
 
-        button:hover {
+        .btn:hover {
             background: #2e59d9;
+        }
+
+        .btn:disabled {
+            background: #aaa;
+            cursor: default;
+        }
+
+        #planMsg {
+            margin-left: 12px;
+            font-size: 13px;
+            color: #28a745;
         }
     </style>
 </head>
 
 <body>
 
-<div class="sidebar">
-    <h2>📚 StudyBuddy</h2>
-
-    <a href="dashboard.html">Dashboard</a>
-    <a href="timetable.html">Timetable</a>
-    <a href="session.html">Study Session</a>
-    <a href="progress.html">Progress</a>
-    <a href="courses.html">Courses</a>
-    <a href="settings.html">Settings</a>
-    <a href="login.html">Logout</a>
-</div>
-
-<div class="main">
-
-    <div class="header">
-        <h2>Welcome, <span id="username">Student</span> 👋</h2>
-        <p>Stay consistent and achieve your goals!</p>
+    <div class="sidebar">
+        <h2>📚 StudyBuddy</h2>
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="timetable.html">📅 Timetable</a>
+        <a href="session.html">⏱ Study Session</a>
+        <a href="alarm.html">⏰ Alarm</a>
+        <a href="progress.html">📊 Progress</a>
+        <a href="courses.html">📚 Courses</a>
+        <a href="weak.html">⚠️ Weak Areas</a>
+        <a href="gamification.html">🎮 Gamification</a>
+        <a href="settings.html">⚙️ Settings</a>
+        <a class="logout" onclick="logout()">🚪 Logout</a>
     </div>
 
-    <div class="cards">
-
-        <div class="card">
-            <h3>📅 Study Hours</h3>
-            <p id="studyHours">0 hrs</p>
+    <div class="main">
+        <div class="header">
+            <div>
+                <h2 style="margin:0">Welcome, <span id="username">Student</span> 👋</h2>
+                <p style="margin:4px 0 0 0; color:#666;">Stay consistent and achieve your goals!</p>
+            </div>
+            <div>
+                Level: <strong id="level">—</strong> &nbsp;|&nbsp;
+                XP: <strong id="xpHeader">—</strong>
+            </div>
         </div>
 
-        <div class="card">
-            <h3>🔥 Streak</h3>
-            <p id="streak">0 days</p>
+        <div class="cards">
+            <div class="card">
+                <h3>📅 Total Study Hours</h3>
+                <p id="studyHours">—</p>
+            </div>
+            <div class="card">
+                <h3>🔥 Streak</h3>
+                <p id="streak">—</p>
+            </div>
+            <div class="card">
+                <h3>⭐ XP</h3>
+                <p id="xp">—</p>
+            </div>
+            <div class="card">
+                <h3>📊 Preparation</h3>
+                <p id="progress">—</p>
+            </div>
+            <div class="card">
+                <h3>🧠 Stress Level</h3>
+                <p id="stress">—</p>
+            </div>
+            <div class="card">
+                <h3>📝 Sessions Done</h3>
+                <p id="sessions">—</p>
+            </div>
         </div>
 
-        <div class="card">
-            <h3>⭐ XP</h3>
-            <p id="xp">0</p>
+        <div class="timetable-section">
+            <div style="display:flex; align-items:center; margin-bottom:10px;">
+                <h3 style="margin:0;">📅 Today's Plan</h3>
+                <button class="btn" id="genBtn" onclick="generatePlan()" style="margin-left:auto;">Generate
+                    Timetable</button>
+                <span id="planMsg"></span>
+            </div>
+            <div id="planContainer">
+                <p style="color:#888;">No timetable yet. Click "Generate Timetable" to create one.</p>
+            </div>
         </div>
-
-        <div class="card">
-            <h3>📊 Progress</h3>
-            <p id="progress">0%</p>
-        </div>
-
     </div>
 
-    <div class="timetable">
-        <h3>Today's Plan</h3>
-        <ul id="planList">
-            <li>No plan yet</li>
-        </ul>
+    <script src="js/api.js"></script>
+    <script>
+        requireAuth();
 
-        <button onclick="generatePlan()">Generate Plan</button>
-    </div>
+        // Populate username from localStorage immediately
+        const storedName = localStorage.getItem("name");
+        if (storedName) document.getElementById("username").innerText = storedName;
 
-</div>
+        async function loadDashboard() {
+            const data = await getDashboardData();
+            if (!data._ok) return;
 
-<script>
-    const BASE_URL = "http://127.0.0.1:5000";
+            document.getElementById("username").innerText = data.name || storedName || "Student";
+            document.getElementById("studyHours").innerText = (data.total_study_hours ?? "0") + " hrs";
+            document.getElementById("streak").innerText = (data.streak ?? 0) + " days";
+            document.getElementById("xp").innerText = data.xp ?? 0;
+            document.getElementById("xpHeader").innerText = data.xp ?? 0;
+            document.getElementById("level").innerText = data.level ?? 1;
+            document.getElementById("progress").innerText = (data.preparation_percent ?? 0) + "%";
+            document.getElementById("sessions").innerText = data.total_sessions ?? 0;
 
-    async function loadDashboard() {
-        try {
-            const response = await fetch(`${BASE_URL}/dashboard`);
-            const data = await response.json();
-
-            document.getElementById("username").innerText = data.name;
-            document.getElementById("studyHours").innerText = data.study_hours + " hrs";
-            document.getElementById("streak").innerText = data.streak + " days";
-            document.getElementById("xp").innerText = data.xp;
-            document.getElementById("progress").innerText = data.progress + "%";
-
-        } catch (error) {
-            console.log("Error loading dashboard");
+            const stress = data.stress_level || "—";
+            const stressEl = document.getElementById("stress");
+            stressEl.innerHTML = `<span class="stress-badge stress-${stress}">${stress}</span>`;
         }
-    }
 
-    async function generatePlan() {
-        const response = await fetch(`${BASE_URL}/generate-plan`);
-        const data = await response.json();
+        async function generatePlan() {
+            const btn = document.getElementById("genBtn");
+            const msg = document.getElementById("planMsg");
+            btn.disabled = true;
+            msg.innerText = "Generating...";
 
-        const list = document.getElementById("planList");
-        list.innerHTML = "";
+            const res = await generateTimetable();
+            if (res._ok) {
+                msg.innerText = "✅ " + (res.message || "Generated!");
+                await loadTimetable();
+            } else {
+                msg.style.color = "red";
+                msg.innerText = "❌ " + (res.message || "Error");
+            }
+            btn.disabled = false;
+        }
 
-        data.plan.forEach(item => {
-            const li = document.createElement("li");
-            li.innerText = item.subject + " - " + item.hours + " hrs";
-            list.appendChild(li);
-        });
-    }
+        async function loadTimetable() {
+            const entries = await getTimetable();
+            const container = document.getElementById("planContainer");
 
-    loadDashboard();
-</script>
+            if (!Array.isArray(entries) || entries.length === 0) {
+                container.innerHTML = '<p style="color:#888;">No timetable yet.</p>';
+                return;
+            }
+
+            const today = new Date().toISOString().split("T")[0];
+            const todayEntries = entries.filter(e => e.date === today);
+            const display = todayEntries.length > 0 ? todayEntries : entries.slice(0, 10);
+
+            let html = '<table><tr><th>Date</th><th>Subject</th><th>Planned Hours</th></tr>';
+            display.forEach(e => {
+                html += `<tr><td>${e.date}</td><td>${e.subject}</td><td>${e.planned_hours} hrs</td></tr>`;
+            });
+            html += '</table>';
+            container.innerHTML = html;
+        }
+
+        loadDashboard();
+        loadTimetable();
+    </script>
 
 </body>
+
 </html>

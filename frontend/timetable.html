@@ -1,31 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Timetable</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable - StudyBuddy</title>
     <style>
-        body { font-family: Arial; text-align: center; background: #f4f6f8; }
-        nav a { margin: 10px; text-decoration: none; font-weight: bold; }
-        .card { background: white; padding: 20px; margin: 20px auto; width: 60%; border-radius: 10px; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background: #4e73df;
+            color: white;
+            position: fixed;
+            padding-top: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background: #2e59d9;
+        }
+
+        .logout {
+            cursor: pointer;
+        }
+
+        .main {
+            margin-left: 220px;
+            padding: 24px;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #4e73df;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 11px 14px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        th {
+            background: #f0f4ff;
+            color: #4e73df;
+            font-size: 13px;
+        }
+
+        tr:hover td {
+            background: #fafbff;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #4e73df;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: #2e59d9;
+        }
+
+        .btn:disabled {
+            background: #aaa;
+        }
+
+        #msg {
+            margin-left: 12px;
+            font-size: 13px;
+        }
+
+        .empty {
+            color: #888;
+            text-align: center;
+            padding: 30px;
+        }
     </style>
 </head>
+
 <body>
 
-    <h1>📅 Timetable</h1>
-
-    <nav>
-        <a href="session.html">Session</a>
-        <a href="weak.html">Weak Areas</a>
-        <a href="alarm.html">Alarm</a>
-        <a href="progress.html">Progress</a>
-    </nav>
-
-    <div class="card">
-        <h3>Today's Schedule</h3>
-        <p>9:00 AM — Study Math</p>
-        <p>11:00 AM — Coding Practice</p>
-        <p>3:00 PM — Revision</p>
+    <div class="sidebar">
+        <h2>📚 StudyBuddy</h2>
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="timetable.html" class="active">📅 Timetable</a>
+        <a href="session.html">⏱ Study Session</a>
+        <a href="alarm.html">⏰ Alarm</a>
+        <a href="progress.html">📊 Progress</a>
+        <a href="courses.html">📚 Courses</a>
+        <a href="weak.html">⚠️ Weak Areas</a>
+        <a href="gamification.html">🎮 Gamification</a>
+        <a href="settings.html">⚙️ Settings</a>
+        <a class="logout" onclick="logout()">🚪 Logout</a>
     </div>
 
+    <div class="main">
+        <div class="card">
+            <div style="display:flex; align-items:center; margin-bottom:16px;">
+                <h2 style="margin:0">📅 Study Timetable</h2>
+                <button class="btn" id="genBtn" onclick="generatePlan()" style="margin-left:auto;">Generate New
+                    Plan</button>
+                <span id="msg"></span>
+            </div>
+            <div id="tableContainer">
+                <p class="empty">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        requireAuth();
+
+        async function loadTimetable() {
+            const entries = await getTimetable();
+            const container = document.getElementById("tableContainer");
+
+            if (!Array.isArray(entries) || entries.length === 0) {
+                container.innerHTML = '<p class="empty">No timetable found. Click "Generate New Plan" to create one.</p>';
+                return;
+            }
+
+            let html = `<table>
+            <tr>
+                <th>#</th><th>Date</th><th>Subject</th><th>Planned Hours</th>
+            </tr>`;
+            entries.forEach((e, i) => {
+                html += `<tr>
+                <td>${i + 1}</td>
+                <td>${e.date}</td>
+                <td>${e.subject}</td>
+                <td>${e.planned_hours} hrs</td>
+            </tr>`;
+            });
+            html += '</table>';
+            container.innerHTML = html;
+        }
+
+        async function generatePlan() {
+            const btn = document.getElementById("genBtn");
+            const msg = document.getElementById("msg");
+            btn.disabled = true;
+            msg.style.color = "#333";
+            msg.innerText = "Generating...";
+
+            const res = await generateTimetable();
+            if (res._ok) {
+                msg.style.color = "#28a745";
+                msg.innerText = "✅ " + (res.message || "Generated!");
+                loadTimetable();
+            } else {
+                msg.style.color = "red";
+                msg.innerText = "❌ " + (res.message || "Failed");
+            }
+            btn.disabled = false;
+        }
+
+        loadTimetable();
+    </script>
+
 </body>
+
 </html>

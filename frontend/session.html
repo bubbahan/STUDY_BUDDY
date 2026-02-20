@@ -1,24 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Session</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Session - StudyBuddy</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background: #4e73df;
+            color: white;
+            position: fixed;
+            padding-top: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background: #2e59d9;
+        }
+
+        .logout {
+            cursor: pointer;
+        }
+
+        .main {
+            margin-left: 220px;
+            padding: 24px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #4e73df;
+        }
+
+        .timer-display {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            color: #4e73df;
+            margin: 20px 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            color: white;
+        }
+
+        .btn-start {
+            background: #28a745;
+        }
+
+        .btn-stop {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-reset {
+            background: #6c757d;
+        }
+
+        .btn-save {
+            background: #4e73df;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        #sessionMsg {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1>📘 Study Session</h1>
+    <div class="sidebar">
+        <h2>📚 StudyBuddy</h2>
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="timetable.html">📅 Timetable</a>
+        <a href="session.html">⏱ Study Session</a>
+        <a href="alarm.html">⏰ Alarm</a>
+        <a href="progress.html">📊 Progress</a>
+        <a href="courses.html">📚 Courses</a>
+        <a href="weak.html">⚠️ Weak Areas</a>
+        <a href="gamification.html">🎮 Gamification</a>
+        <a href="settings.html">⚙️ Settings</a>
+        <a class="logout" onclick="logout()">🚪 Logout</a>
+    </div>
 
-    <a href="timetable.html">⬅ Back to Timetable</a>
+    <div class="main">
+        <div class="card">
+            <h2>⏱ Study Session</h2>
 
-    <p>Start your focused study session here.</p>
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" id="subject" placeholder="e.g. Mathematics">
+            </div>
 
-    <button onclick="startSession()">Start Session</button>
+            <div class="form-group">
+                <label>Planned Hours</label>
+                <input type="number" id="plannedHours" placeholder="e.g. 2" min="0.5" step="0.5">
+            </div>
 
-    <script>
-        function startSession() {
-            alert("Session Started!");
-        }
-    </script>
+            <div class="form-group">
+                <label>Units Completed (optional)</label>
+                <input type="number" id="unitsCompleted" placeholder="e.g. 3" min="0">
+            </div>
+
+            <div class="timer-display" id="timerDisplay">0:00:00</div>
+
+            <div class="btn-row">
+                <button class="btn btn-start" id="startBtn" onclick="startTimer()">▶ Start</button>
+                <button class="btn btn-stop" id="stopBtn" onclick="stopTimer()" disabled>⏸ Pause</button>
+                <button class="btn btn-reset" id="resetBtn" onclick="resetTimer()">↺ Reset</button>
+            </div>
+
+            <div class="btn-row" style="margin-top:14px;">
+                <button class="btn btn-save" id="saveBtn" onclick="saveStudySession()">💾 Save Session</button>
+            </div>
+
+            <div id="sessionMsg"></div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/timer.js"></script>
 
 </body>
+
 </html>

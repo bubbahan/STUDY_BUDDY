@@ -1,28 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | StudyBuddy</title>
-
-    <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 30px 0;
+            min-height: 100vh;
+        }
 
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 400px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #4e73df;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: #4e73df;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            background: #2e59d9;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+            min-height: 18px;
+        }
+
+        p {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        a {
+            color: #4e73df;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
 </head>
+
 <body>
 
-    <!-- NAVBAR -->
-    <div class="navbar">
-        <h1>StudyBuddy</h1>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="login.html">Login</a>
-        </div>
-    </div>
-
-    <!-- REGISTER FORM -->
     <div class="form-container">
-
-        <h2>Create Account</h2>
+        <h2>📚 Create Account</h2>
 
         <div class="form-group">
             <label>Full Name</label>
@@ -41,17 +112,25 @@
 
         <div class="form-group">
             <label>Study Hours Per Day</label>
-            <input type="number" id="hours" placeholder="e.g. 4">
+            <input type="number" id="hours" placeholder="e.g. 4" min="1" max="16">
         </div>
 
         <div class="form-group">
             <label>Sleep Time</label>
-            <input type="time" id="sleep">
+            <input type="time" id="sleep" value="23:00">
         </div>
 
         <div class="form-group">
             <label>Wake Up Time</label>
-            <input type="time" id="wake">
+            <input type="time" id="wake" value="07:00">
+        </div>
+
+        <div class="form-group">
+            <label>Study Preference</label>
+            <select id="preference">
+                <option value="morning">Morning</option>
+                <option value="night">Night</option>
+            </select>
         </div>
 
         <div class="form-group">
@@ -59,20 +138,21 @@
             <input type="date" id="exam">
         </div>
 
-        <button class="btn btn-primary" onclick="registerUser()">
-            Register
-        </button>
+        <div class="form-group">
+            <label>Subjects (comma-separated)</label>
+            <input type="text" id="subjects" placeholder="e.g. Math, Physics, Chemistry">
+        </div>
 
-        <p style="margin-top:15px;text-align:center;">
-            Already have an account?
-            <a href="login.html">Login</a>
-        </p>
+        <div class="error" id="errorMsg"></div>
 
+        <button class="btn-primary" onclick="registerUser()">Register</button>
+
+        <p>Already have an account? <a href="login.html">Login</a></p>
     </div>
 
-    <!-- JS -->
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
 
 </body>
+
 </html>
