@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Alarm</title>
+</head>
+<body>
+
+    <h1>⏰ Alarm</h1>
+
+    <a href="timetable.html">⬅ Back to Timetable</a>
+
+    <input type="time" id="alarmTime">
+    <button onclick="setAlarm()">Set Alarm</button>
+
+    <script>
+        function setAlarm() {
+            let time = document.getElementById("alarmTime").value;
+            alert("Alarm set for " + time);
+        }
+    </script>
+
+</body>
+</html>

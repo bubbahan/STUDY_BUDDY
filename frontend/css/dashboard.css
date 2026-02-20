@@ -1,0 +1,159 @@
+/* =========================
+   DASHBOARD LAYOUT
+========================= */
+
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar {
+    width: 240px;
+    background: #1e293b;
+    color: white;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar ul li {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.sidebar ul li:hover {
+    background: #334155;
+}
+
+/* =========================
+   MAIN CONTENT
+========================= */
+
+.main-content {
+    flex: 1;
+    padding: 25px;
+    overflow-y: auto;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.dashboard-header h1 {
+    font-size: 24px;
+}
+
+/* =========================
+   STATS CARDS
+========================= */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.stat-card h3 {
+    font-size: 14px;
+    color: #777;
+}
+
+.stat-card p {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* =========================
+   TODAY TASK
+========================= */
+
+.task-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.task-item:last-child {
+    border-bottom: none;
+}
+
+/* =========================
+   PROGRESS BAR
+========================= */
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 5px;
+    margin-top: 8px;
+}
+
+.progress-fill {
+    height: 8px;
+    background: #4a6cf7;
+    border-radius: 5px;
+}
+
+/* =========================
+   STREAK BADGE
+========================= */
+
+.badge {
+    background: #4a6cf7;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .dashboard-container {
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyBuddy</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        header {
+            background: #4e73df;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            background: #2e59d9;
+            padding: 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .hero h1 {
+            font-size: 40px;
+            color: #333;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .btn {
+            margin: 15px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            background: #4e73df;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #2e59d9;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 40px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            width: 250px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #333;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>📚 StudyBuddy</h1>
+    <p>Smart Academic Planner & Discipline System</p>
+</header>
+
+<nav>
+    <a href="#">Home</a>
+    <a href="#features">Features</a>
+    <a href="login.html">Login</a>
+    <a href="register.html">Register</a>
+</nav>
+
+<section class="hero">
+    <h1>Plan Smart. Study Better. Achieve More.</h1>
+    <p>Your AI-powered academic companion to manage studies efficiently.</p>
+
+    <button class="btn" onclick="goToLogin()">Get Started</button>
+    <button class="btn" onclick="goToRegister()">Create Account</button>
+</section>
+
+<section id="features" class="features">
+
+    <div class="card">
+        <h3>📅 Smart Timetable</h3>
+        <p>Automatically generates your study schedule based on exams.</p>
+    </div>
+
+    <div class="card">
+        <h3>⏱ Study Tracker</h3>
+        <p>Track your daily study sessions and productivity.</p>
+    </div>
+
+    <div class="card">
+        <h3>📊 Performance Analysis</h3>
+        <p>Identify weak areas and improve efficiently.</p>
+    </div>
+
+    <div class="card">
+        <h3>🎮 Gamification</h3>
+        <p>Earn XP, maintain streaks, and stay motivated.</p>
+    </div>
+
+</section>
+
+<footer>
+    <p>© 2026 StudyBuddy. All rights reserved.</p>
+</footer>
+
+<script>
+    function goToLogin() {
+        window.location.href = "login.html";
+    }
+
+    function goToRegister() {
+        window.location.href = "register.html";
+    }
+</script>
+
+</body>
+</html>
+
