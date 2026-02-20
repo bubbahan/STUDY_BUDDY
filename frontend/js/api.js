@@ -130,3 +130,15 @@ function logout() {
     localStorage.clear();
     window.location.href = "login.html";
 }
+
+// =============================
+// AI API
+// =============================
+
+function getAITimetable() {
+    return apiRequest("/api/ai/timetable", "POST", null, true);
+}
+
+function getAITips() {
+    return apiRequest("/api/ai/tips", "POST", null, true);
+}

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Study Assistant - StudyBuddy</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        /* ---- Sidebar ---- */
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background: #4e73df;
+            color: white;
+            position: fixed;
+            padding-top: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #2e59d9;
+        }
+
+        .logout {
+            cursor: pointer;
+        }
+
+        /* ---- Main ---- */
+        .main {
+            margin-left: 220px;
+            padding: 24px;
+        }
+
+        h2 {
+            color: #4e73df;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #777;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+
+
+        /* ---- Grid ---- */
+        .ai-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        @media (max-width: 900px) {
+            .ai-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ---- Panel ---- */
+        .ai-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, #4e73df, #2e59d9);
+            color: white;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .panel-header .icon {
+            font-size: 28px;
+        }
+
+        .panel-header h3 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .panel-header p {
+            margin: 4px 0 0;
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        .panel-body {
+            padding: 20px;
+        }
+
+        .gen-btn {
+            width: 100%;
+            padding: 12px;
+            background: #4e73df;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .gen-btn:hover:not(:disabled) {
+            background: #2e59d9;
+        }
+
+        .gen-btn:disabled {
+            background: #aaa;
+            cursor: default;
+        }
+
+        /* Spinner */
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Markdown output */
+        .ai-output {
+            background: #f8f9ff;
+            border: 1px solid #e0e7ff;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #333;
+            min-height: 80px;
+            white-space: pre-wrap;
+            /* preserve newlines */
+        }
+
+        .ai-output.empty {
+            color: #bbb;
+            font-style: italic;
+        }
+
+        /* Table styling inside output */
+        .ai-output table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+
+        .ai-output th {
+            background: #4e73df;
+            color: white;
+            padding: 7px 10px;
+            text-align: left;
+        }
+
+        .ai-output td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .ai-output tr:hover td {
+            background: #f0f4ff;
+        }
+
+        .status-msg {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 8px;
+            min-height: 18px;
+        }
+
+        .status-msg.error {
+            color: #dc3545;
+        }
+
+        .status-msg.success {
+            color: #28a745;
+        }
+
+        /* Copy button */
+        .copy-btn {
+            background: none;
+            border: 1px solid #4e73df;
+            color: #4e73df;
+            border-radius: 5px;
+            padding: 4px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            float: right;
+            margin-bottom: 6px;
+        }
+
+        .copy-btn:hover {
+            background: #4e73df;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <h2>📚 StudyBuddy</h2>
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="timetable.html">📅 Timetable</a>
+        <a href="session.html">⏱ Study Session</a>
+        <a href="alarm.html">⏰ Alarm</a>
+        <a href="progress.html">📊 Progress</a>
+        <a href="courses.html">📚 Courses</a>
+        <a href="weak.html">⚠️ Weak Areas</a>
+        <a href="gamification.html">🎮 Gamification</a>
+        <a href="ai_study.html" class="active">🤖 AI Assistant</a>
+        <a href="settings.html">⚙️ Settings</a>
+        <a class="logout" onclick="logout()">🚪 Logout</a>
+    </div>
+
+    <div class="main">
+        <h2>🤖 AI Study Assistant</h2>
+        <p class="subtitle">Powered by OpenRouter · Your personalized AI-driven study planner and coach</p>
+
+
+
+        <div class="ai-grid">
+
+            <!-- AI TIMETABLE PANEL -->
+            <div class="ai-panel">
+                <div class="panel-header">
+                    <div class="icon">📅</div>
+                    <div>
+                        <h3>AI Study Timetable</h3>
+                        <p>Generates a personalized weekly schedule based on your subjects, exam date & study hours</p>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <button class="gen-btn" id="ttBtn" onclick="generateAITimetable()">
+                        <span class="spinner" id="ttSpinner"></span>
+                        ✨ Generate AI Timetable
+                    </button>
+                    <div class="status-msg" id="ttStatus"></div>
+                    <div style="overflow:hidden">
+                        <button class="copy-btn" onclick="copyOutput('ttOutput')">📋 Copy</button>
+                    </div>
+                    <div class="ai-output empty" id="ttOutput">Click the button to generate your personalized AI
+                        timetable...</div>
+                </div>
+            </div>
+
+            <!-- AI TIPS PANEL -->
+            <div class="ai-panel">
+                <div class="panel-header">
+                    <div class="icon">💡</div>
+                    <div>
+                        <h3>AI Study Tips</h3>
+                        <p>Get personalized tips based on your current progress, weak areas & stress level</p>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <button class="gen-btn" id="tipsBtn" onclick="generateAITips()">
+                        <span class="spinner" id="tipsSpinner"></span>
+                        💡 Get Personalized Tips
+                    </button>
+                    <div class="status-msg" id="tipsStatus"></div>
+                    <div style="overflow:hidden">
+                        <button class="copy-btn" onclick="copyOutput('tipsOutput')">📋 Copy</button>
+                    </div>
+                    <div class="ai-output empty" id="tipsOutput">Click the button to get AI-powered study tips tailored
+                        to you...</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        requireAuth();
+
+        // AI requests — server uses the key from config.py automatically
+        async function aiRequest(endpoint) {
+            const token = localStorage.getItem("token");
+            try {
+                const res = await fetch(BASE_URL + endpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token
+                    }
+                });
+                const json = await res.json();
+                json._ok = res.ok;
+                if (res.status === 401) {
+                    localStorage.clear();
+                    window.location.href = "login.html";
+                }
+                return json;
+            } catch (e) {
+                return { _ok: false, message: "Network error: " + e.message };
+            }
+        }
+
+        // ---- Convert basic markdown to HTML for display ----
+        function renderMarkdown(text) {
+            return text
+                // Headers
+                .replace(/^### (.+)$/gm, "<h4>$1</h4>")
+                .replace(/^## (.+)$/gm, "<h3>$1</h3>")
+                .replace(/^# (.+)$/gm, "<h2>$1</h2>")
+                // Bold
+                .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+                // Italic
+                .replace(/\*(.+?)\*/g, "<em>$1</em>")
+                // Bullet lists
+                .replace(/^[-•] (.+)$/gm, "<li>$1</li>")
+                .replace(/(<li>.*<\/li>\s*)+/g, m => `<ul>${m}</ul>`)
+                // Numbered lists
+                .replace(/^\d+\. (.+)$/gm, "<li>$1</li>")
+                // Line breaks
+                .replace(/\n\n/g, "<br><br>")
+                // Markdown tables → HTML
+                .replace(/\|(.+)\|\n\|[-| :]+\|\n((?:\|.+\|\n?)+)/g, (_, header, rows) => {
+                    const th = header.split("|").filter(c => c.trim()).map(c => `<th>${c.trim()}</th>`).join("");
+                    const trs = rows.trim().split("\n").map(row => {
+                        const tds = row.split("|").filter(c => c.trim()).map(c => `<td>${c.trim()}</td>`).join("");
+                        return `<tr>${tds}</tr>`;
+                    }).join("");
+                    return `<table><tr>${th}</tr>${trs}</table>`;
+                });
+        }
+
+        function setLoading(btnId, spinnerId, loading) {
+            document.getElementById(btnId).disabled = loading;
+            document.getElementById(spinnerId).style.display = loading ? "inline-block" : "none";
+        }
+
+        // ---- AI TIMETABLE ----
+        async function generateAITimetable() {
+            setLoading("ttBtn", "ttSpinner", true);
+            const status = document.getElementById("ttStatus");
+            status.className = "status-msg";
+            status.innerText = "🤖 AI is generating your timetable...";
+
+            const res = await aiRequest("/api/ai/timetable");
+
+            setLoading("ttBtn", "ttSpinner", false);
+            const output = document.getElementById("ttOutput");
+
+            if (res._ok && res.result) {
+                output.className = "ai-output";
+                output.innerHTML = renderMarkdown(res.result);
+                status.className = "status-msg success";
+                status.innerText = "✅ AI timetable generated!";
+            } else {
+                output.className = "ai-output empty";
+                output.innerHTML = res.message || "Failed to generate.";
+                status.className = "status-msg error";
+                status.innerText = "❌ " + (res.message || "Error");
+            }
+        }
+
+        // ---- AI TIPS ----
+        async function generateAITips() {
+            setLoading("tipsBtn", "tipsSpinner", true);
+            const status = document.getElementById("tipsStatus");
+            status.className = "status-msg";
+            status.innerText = "🤖 AI is crafting your personalized tips...";
+
+            const res = await aiRequest("/api/ai/tips");
+
+            setLoading("tipsBtn", "tipsSpinner", false);
+            const output = document.getElementById("tipsOutput");
+
+            if (res._ok && res.result) {
+                output.className = "ai-output";
+                output.innerHTML = renderMarkdown(res.result);
+                status.className = "status-msg success";
+                status.innerText = "✅ Tips generated!";
+            } else {
+                output.className = "ai-output empty";
+                output.innerHTML = res.message || "Failed to generate.";
+                status.className = "status-msg error";
+                status.innerText = "❌ " + (res.message || "Error");
+            }
+        }
+
+        function copyOutput(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => alert("Copied!"));
+        }
+    </script>
+
+</body>
+
+</html>

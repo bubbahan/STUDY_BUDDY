@@ -7,3 +7,8 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL") or "sqlite:///studybuddy.db"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_ACCESS_TOKEN_EXPIRES = False  # Tokens don't expire during development
+
+    # OpenRouter AI API
+    OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY") or "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"
+    OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL") or "openai/gpt-3.5-turbo"
+    OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions"

@@ -48,6 +48,7 @@ def create_app():
     from routes.analytics_routes import analytics_bp
     from routes.course_routes import course_bp
     from routes.session_routes import session_bp
+    from routes.ai_routes import ai_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(user_bp, url_prefix="/api/user")
@@ -55,6 +56,7 @@ def create_app():
     app.register_blueprint(analytics_bp, url_prefix="/api/analytics")
     app.register_blueprint(course_bp, url_prefix="/api/courses")
     app.register_blueprint(session_bp, url_prefix="/api/session")
+    app.register_blueprint(ai_bp, url_prefix="/api/ai")
 
     # ------ Serve Frontend Static Files ------
     frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))

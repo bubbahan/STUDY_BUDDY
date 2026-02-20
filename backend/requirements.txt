@@ -3,3 +3,4 @@ Flask-SQLAlchemy
 flask-jwt-extended
 flask-cors
 werkzeug
+requests
