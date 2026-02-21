@@ -449,21 +449,36 @@
                     </div>
                     <div class="settings-card-body">
                         <div class="sound-options" id="soundOptions">
-                            <label class="sound-option" onclick="selectSound('default')">
-                                <input type="radio" name="alarm" value="default"> 🔔 Default Bell
-                            </label>
-                            <label class="sound-option" onclick="selectSound('chime')">
-                                <input type="radio" name="alarm" value="chime"> 🎵 Gentle Chime
-                            </label>
-                            <label class="sound-option" onclick="selectSound('alarm')">
-                                <input type="radio" name="alarm" value="alarm"> ⏰ Classic Alarm
-                            </label>
-                            <label class="sound-option" onclick="selectSound('digital')">
-                                <input type="radio" name="alarm" value="digital"> 📱 Digital Beep
-                            </label>
-                            <label class="sound-option" onclick="selectSound('nature')">
-                                <input type="radio" name="alarm" value="nature"> 🌿 Nature Sounds
-                            </label>
+                            <div class="sound-option" onclick="selectSound('default')">
+                                <input type="radio" name="alarm" value="default">
+                                <span style="flex:1">🔔 Default Bell</span>
+                                <button class="copy-btn" onclick="previewSound(event, 'default')"
+                                    style="margin:0; padding: 2px 8px; font-size: 10px;">▶ Play</button>
+                            </div>
+                            <div class="sound-option" onclick="selectSound('chime')">
+                                <input type="radio" name="alarm" value="chime">
+                                <span style="flex:1">🎵 Gentle Chime</span>
+                                <button class="copy-btn" onclick="previewSound(event, 'chime')"
+                                    style="margin:0; padding: 2px 8px; font-size: 10px;">▶ Play</button>
+                            </div>
+                            <div class="sound-option" onclick="selectSound('classic')">
+                                <input type="radio" name="alarm" value="classic">
+                                <span style="flex:1">⏰ Classic Alarm</span>
+                                <button class="copy-btn" onclick="previewSound(event, 'classic')"
+                                    style="margin:0; padding: 2px 8px; font-size: 10px;">▶ Play</button>
+                            </div>
+                            <div class="sound-option" onclick="selectSound('digital')">
+                                <input type="radio" name="alarm" value="digital">
+                                <span style="flex:1">📱 Digital Beep</span>
+                                <button class="copy-btn" onclick="previewSound(event, 'digital')"
+                                    style="margin:0; padding: 2px 8px; font-size: 10px;">▶ Play</button>
+                            </div>
+                            <div class="sound-option" onclick="selectSound('nature')">
+                                <input type="radio" name="alarm" value="nature">
+                                <span style="flex:1">🌿 Nature Sounds</span>
+                                <button class="copy-btn" onclick="previewSound(event, 'nature')"
+                                    style="margin:0; padding: 2px 8px; font-size: 10px;">▶ Play</button>
+                            </div>
                         </div>
                         <div class="msg" id="soundMsg"></div>
                     </div>
@@ -605,6 +620,11 @@
                 msg.className = "msg error"; msg.innerText = "❌ Failed to save.";
             }
             setTimeout(() => { msg.innerText = ""; }, 2000);
+        }
+
+        function previewSound(event, value) {
+            if (event) event.stopPropagation();
+            SoundManager.play(value);
         }
 
         // Change password

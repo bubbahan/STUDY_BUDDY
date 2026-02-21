@@ -325,12 +325,23 @@
                     fired = true;
                     clockEl.classList.add("ringing");
 
-                    // Simple sound simulation
-                    console.log(`PLAYING SOUND: ${activeSound}`);
+                    // Play actual sound using SoundManager
+                    SoundManager.play(activeSound, true);
+
+                    // Show stop button if it doesn't exist
+                    if (!document.getElementById("stopAlarmBtn")) {
+                        const stopBtn = document.createElement("button");
+                        stopBtn.id = "stopAlarmBtn";
+                        stopBtn.className = "btn-set";
+                        stopBtn.style.background = "var(--danger)";
+                        stopBtn.style.marginTop = "10px";
+                        stopBtn.innerText = "🛑 Stop Alarm";
+                        stopBtn.onclick = stopAlarm;
+                        document.querySelector(".alarm-form").appendChild(stopBtn);
+                    }
 
                     setTimeout(() => {
-                        alert(`⏰ STUDY ALARM!\n\n${a.label || 'Time to study!'}\n\nSound: ${activeSound}`);
-                        clockEl.classList.remove("ringing");
+                        alert(`⏰ STUDY ALARM!\n\n${a.label || 'Time to study!'}`);
                     }, 100);
                 }
             });
@@ -339,6 +350,14 @@
                 localStorage.setItem("studyAlarms", JSON.stringify(alarms));
                 renderAlarms();
             }
+        }
+
+        function stopAlarm() {
+            const clockEl = document.getElementById("currentTime");
+            clockEl.classList.remove("ringing");
+            SoundManager.stop();
+            const stopBtn = document.getElementById("stopAlarmBtn");
+            if (stopBtn) stopBtn.remove();
         }
 
         setInterval(updateClock, 1000);
