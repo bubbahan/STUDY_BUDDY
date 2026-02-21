@@ -78,14 +78,12 @@ List the key features of your project:
 
 #### Screenshots (Add at least 3)
 
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
+<img width="1521" height="901" alt="Screenshot 2026-02-21 110112" src="https://github.com/user-attachments/assets/fe12958f-838a-4111-93f3-d3c8ffb64420" />
 
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
+<img width="1521" height="901" alt="Screenshot 2026-02-21 110112" src="https://github.com/user-attachments/assets/f24e398c-6fb2-40fa-8e47-9eae164919cc" />
 
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
+<img width="1903" height="911" alt="Screenshot 2026-02-21 105249" src="https://github.com/user-attachments/assets/be8f6084-87cd-4afc-9c8c-51f9b8122256" />
+
 
 #### Diagrams
 
@@ -126,16 +124,7 @@ List the key features of your project:
 
 #### Build Photos
 
-![](Add photo of your team here)
 
-![Components](Add photo of your components here)
-*List out all components shown*
-
-![Build](Add photos of build process here)
-*Explain the build steps*
-
-![Final](Add photo of final product here)
-*Explain the final build*
 
 ---
 
@@ -243,9 +232,7 @@ python script.py -o output.txt input.txt
 python script.py -c config.json --verbose input.txt
 ```
 
-#### Demo Output
-
-**Example 1: Basic Processing**
+https://drive.google.com/file/d/1fEF7fJ0xJTMBjFbzC5fqz_FcoxNl5MVZ/view?usp=sharing
 
 **Input:**
 ```
