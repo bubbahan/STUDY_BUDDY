@@ -177,67 +177,6 @@
             font-size: 14px;
             min-height: 18px;
         }
-
-        /* ---- Sound picker ---- */
-        .sound-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 4px;
-        }
-
-        .sound-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 9px 12px;
-            border: 2px solid #e0e7ff;
-            border-radius: 8px;
-            cursor: pointer;
-            background: #f8f9ff;
-            transition: border-color 0.15s, background 0.15s;
-            font-size: 13px;
-            user-select: none;
-        }
-
-        .sound-option:hover {
-            border-color: #4e73df;
-            background: #eef1ff;
-        }
-
-        .sound-option.selected {
-            border-color: #4e73df;
-            background: #e8edff;
-            font-weight: bold;
-            color: #2e59d9;
-        }
-
-        .sound-icon {
-            font-size: 17px;
-        }
-
-        .sound-name {
-            flex: 1;
-        }
-
-        .preview-btn {
-            background: #4e73df;
-            border: none;
-            color: white;
-            border-radius: 4px;
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .preview-btn:hover {
-            background: #2e59d9;
-        }
     </style>
 </head>
 
@@ -275,39 +214,6 @@
                 <input type="text" id="alarmLabel" placeholder="e.g. Start Math session">
             </div>
 
-            <!-- Sound Picker -->
-            <div class="form-group">
-                <label>🔔 Alarm Sound</label>
-                <div class="sound-grid" id="soundGrid">
-                    <div class="sound-option selected" data-sound="classic" onclick="selectSound(this)">
-                        <span class="sound-icon">🔔</span>
-                        <span class="sound-name">Classic</span>
-                        <button class="preview-btn"
-                            onclick="event.stopPropagation(); previewSound('classic')">▶</button>
-                    </div>
-                    <div class="sound-option" data-sound="bell" onclick="selectSound(this)">
-                        <span class="sound-icon">🎵</span>
-                        <span class="sound-name">School Bell</span>
-                        <button class="preview-btn" onclick="event.stopPropagation(); previewSound('bell')">▶</button>
-                    </div>
-                    <div class="sound-option" data-sound="chime" onclick="selectSound(this)">
-                        <span class="sound-icon">✨</span>
-                        <span class="sound-name">Gentle Chime</span>
-                        <button class="preview-btn" onclick="event.stopPropagation(); previewSound('chime')">▶</button>
-                    </div>
-                    <div class="sound-option" data-sound="buzz" onclick="selectSound(this)">
-                        <span class="sound-icon">📳</span>
-                        <span class="sound-name">Digital Buzz</span>
-                        <button class="preview-btn" onclick="event.stopPropagation(); previewSound('buzz')">▶</button>
-                    </div>
-                    <div class="sound-option" data-sound="rising" onclick="selectSound(this)">
-                        <span class="sound-icon">🚀</span>
-                        <span class="sound-name">Rising Alert</span>
-                        <button class="preview-btn" onclick="event.stopPropagation(); previewSound('rising')">▶</button>
-                    </div>
-                </div>
-            </div>
-
             <div class="btn-row">
                 <button class="btn btn-set" onclick="setAlarm()">⏰ Set Alarm</button>
                 <button class="btn btn-clear" onclick="clearAll()">🗑 Clear All</button>
@@ -322,240 +228,14 @@
         </div>
     </div>
 
-    <!-- Alarm notification banner (hidden by default) -->
-    <div id="alarmBanner" style="
-        display:none; position:fixed; top:0; left:0; right:0; z-index:9999;
-        background:linear-gradient(135deg,#e74c3c,#c0392b);
-        color:white; padding:18px 24px;
-        display:none; align-items:center; justify-content:space-between;
-        font-size:18px; font-weight:bold; box-shadow:0 4px 20px rgba(0,0,0,0.4);
-        animation: flash 0.8s infinite alternate;
-    ">
-        <span id="bannerText">⏰ Study Alarm!</span>
-        <div style="display:flex;gap:10px;">
-            <button onclick="snoozeAlarm()" style="
-                background:rgba(255,255,255,0.25); border:none; color:white;
-                padding:8px 16px; border-radius:6px; cursor:pointer; font-size:14px;">
-                😴 Snooze 5min
-            </button>
-            <button onclick="dismissAlarm()" style="
-                background:white; border:none; color:#e74c3c;
-                padding:8px 16px; border-radius:6px; cursor:pointer; font-size:14px; font-weight:bold;">
-                ✕ Dismiss
-            </button>
-        </div>
-    </div>
-
     <script src="js/api.js"></script>
     <script>
         requireAuth();
 
         let alarms = JSON.parse(localStorage.getItem("studyAlarms") || "[]");
-        let currentFiringAlarm = null;
-        let beepInterval = null;
-        let beepCount = 0;
+        let alarmInterval;
 
-        // =====================
-        // VOICE (Web Speech API)
-        // =====================
-        function speak(text) {
-            if (!window.speechSynthesis) return;
-            window.speechSynthesis.cancel(); // stop any ongoing speech
-            const utter = new SpeechSynthesisUtterance(text);
-            utter.rate = 0.9;
-            utter.pitch = 1.1;
-            utter.volume = 1;
-            // Prefer a clear English voice if available
-            const voices = window.speechSynthesis.getVoices();
-            const eng = voices.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("female"))
-                || voices.find(v => v.lang.startsWith("en"))
-                || voices[0];
-            if (eng) utter.voice = eng;
-            window.speechSynthesis.speak(utter);
-        }
-
-        // =====================
-        // SOUND SELECTION
-        // =====================
-        let selectedSound = localStorage.getItem("alarmSound") || "classic";
-
-        function selectSound(el) {
-            document.querySelectorAll(".sound-option").forEach(o => o.classList.remove("selected"));
-            el.classList.add("selected");
-            selectedSound = el.dataset.sound;
-            localStorage.setItem("alarmSound", selectedSound);
-        }
-
-        function applySound(sound) {
-            selectedSound = sound;
-            localStorage.setItem("alarmSound", sound);
-            document.querySelectorAll(".sound-option").forEach(o => o.classList.remove("selected"));
-            const el = document.querySelector(`.sound-option[data-sound="${sound}"]`);
-            if (el) el.classList.add("selected");
-        }
-
-        // On load: fetch sound from backend (DB), fallback to localStorage
-        window.addEventListener("load", async () => {
-            if (typeof getProfile === "function") {
-                const profile = await getProfile();
-                if (profile._ok && profile.alarm_sound) {
-                    applySound(profile.alarm_sound);
-                    return;
-                }
-            }
-            // Fallback to localStorage
-            applySound(localStorage.getItem("alarmSound") || "classic");
-        });
-
-        // =====================
-        // ALL SOUNDS
-        // =====================
-        function soundClassic(ctx) {
-            // Triple beep: A5 - E5 - A5
-            const osc = ctx.createOscillator(), g = ctx.createGain();
-            osc.connect(g); g.connect(ctx.destination);
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(880, ctx.currentTime);
-            osc.frequency.setValueAtTime(660, ctx.currentTime + 0.15);
-            osc.frequency.setValueAtTime(880, ctx.currentTime + 0.30);
-            g.gain.setValueAtTime(0.6, ctx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.65);
-            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.65);
-        }
-
-        function soundBell(ctx) {
-            // School bell: fundamental + harmonics that decay
-            [440, 880, 1320, 1760].forEach((freq, i) => {
-                const osc = ctx.createOscillator(), g = ctx.createGain();
-                osc.connect(g); g.connect(ctx.destination);
-                osc.type = "sine";
-                osc.frequency.setValueAtTime(freq, ctx.currentTime);
-                g.gain.setValueAtTime(0.4 / (i + 1), ctx.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
-                osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1.5);
-            });
-        }
-
-        function soundChime(ctx) {
-            // Gentle ascending chime: C5 - E5 - G5 - C6
-            const notes = [523, 659, 784, 1047];
-            notes.forEach((freq, i) => {
-                const osc = ctx.createOscillator(), g = ctx.createGain();
-                osc.connect(g); g.connect(ctx.destination);
-                osc.type = "triangle";
-                osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.18);
-                g.gain.setValueAtTime(0, ctx.currentTime + i * 0.18);
-                g.gain.linearRampToValueAtTime(0.4, ctx.currentTime + i * 0.18 + 0.04);
-                g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.18 + 0.8);
-                osc.start(ctx.currentTime + i * 0.18);
-                osc.stop(ctx.currentTime + i * 0.18 + 0.8);
-            });
-        }
-
-        function soundBuzz(ctx) {
-            // Digital buzz: rapid square wave pulses
-            for (let i = 0; i < 3; i++) {
-                const osc = ctx.createOscillator(), g = ctx.createGain();
-                osc.connect(g); g.connect(ctx.destination);
-                osc.type = "square";
-                osc.frequency.setValueAtTime(440, ctx.currentTime + i * 0.22);
-                g.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.22);
-                g.gain.setValueAtTime(0, ctx.currentTime + i * 0.22 + 0.15);
-                osc.start(ctx.currentTime + i * 0.22);
-                osc.stop(ctx.currentTime + i * 0.22 + 0.15);
-            }
-        }
-
-        function soundRising(ctx) {
-            // Rising siren: frequency glides from low to high
-            const osc = ctx.createOscillator(), g = ctx.createGain();
-            osc.connect(g); g.connect(ctx.destination);
-            osc.type = "sawtooth";
-            osc.frequency.setValueAtTime(200, ctx.currentTime);
-            osc.frequency.linearRampToValueAtTime(1200, ctx.currentTime + 0.8);
-            g.gain.setValueAtTime(0.5, ctx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.85);
-            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.85);
-        }
-
-        function playBeep() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const fn = { classic: soundClassic, bell: soundBell, chime: soundChime, buzz: soundBuzz, rising: soundRising };
-                (fn[selectedSound] || soundClassic)(ctx);
-            } catch (e) { }
-        }
-
-        function previewSound(sound) {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const fn = { classic: soundClassic, bell: soundBell, chime: soundChime, buzz: soundBuzz, rising: soundRising };
-                (fn[sound] || soundClassic)(ctx);
-            } catch (e) { }
-        }
-
-        // =====================
-        // FIRE ALARM
-        // =====================
-        function fireAlarm(alarm) {
-            currentFiringAlarm = alarm;
-            const label = alarm.label || "Study Time";
-
-            // Show banner
-            const banner = document.getElementById("alarmBanner");
-            banner.style.display = "flex";
-            document.getElementById("bannerText").innerText = `⏰ ${label} — Time to Study!`;
-
-            // Speak aloud
-            speak(`Attention! ${label}. It's time to study. Please open your books now.`);
-
-            // Beep every 1.5s for up to 30 seconds (20 beeps)
-            beepCount = 0;
-            playBeep();
-            beepInterval = setInterval(() => {
-                beepCount++;
-                playBeep();
-                if (beepCount >= 20) { clearInterval(beepInterval); }
-            }, 1500);
-
-            // Browser notification (if permission granted)
-            if (Notification.permission === "granted") {
-                new Notification("⏰ StudyBuddy Alarm", {
-                    body: `${label} — Time to Study!`,
-                    icon: "favicon.ico"
-                });
-            }
-        }
-
-        function dismissAlarm() {
-            clearInterval(beepInterval);
-            window.speechSynthesis && window.speechSynthesis.cancel();
-            document.getElementById("alarmBanner").style.display = "none";
-            currentFiringAlarm = null;
-        }
-
-        function snoozeAlarm() {
-            clearInterval(beepInterval);
-            window.speechSynthesis && window.speechSynthesis.cancel();
-            document.getElementById("alarmBanner").style.display = "none";
-
-            if (currentFiringAlarm) {
-                // Add a new alarm 5 minutes from now
-                const now = new Date();
-                now.setMinutes(now.getMinutes() + 5);
-                const h = String(now.getHours()).padStart(2, "0");
-                const m = String(now.getMinutes()).padStart(2, "0");
-                alarms.push({ time: `${h}:${m}`, label: "⏰ Snoozed: " + (currentFiringAlarm.label || "Alarm"), fired: false });
-                saveAlarms();
-                renderAlarms();
-                speak("Alarm snoozed for 5 minutes.");
-            }
-            currentFiringAlarm = null;
-        }
-
-        // =====================
-        // CLOCK + ALARM CHECK
-        // =====================
+        // Live clock
         function updateClock() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, "0");
@@ -563,13 +243,14 @@
             const s = String(now.getSeconds()).padStart(2, "0");
             document.getElementById("currentTime").innerText = `${h}:${m}:${s}`;
 
+            // Check alarms
             const hm = `${h}:${m}`;
             alarms.forEach(a => {
                 if (a.time === hm && !a.fired) {
                     a.fired = true;
                     saveAlarms();
-                    renderAlarms();
-                    fireAlarm(a);
+                    const label = a.label ? `\n📌 ${a.label}` : "";
+                    alert(`⏰ Study Alarm!${label}\n\nTime to study!`);
                 }
             });
         }
@@ -577,19 +258,6 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // =====================
-        // NOTIFICATION PERMISSION
-        // =====================
-        if (Notification.permission === "default") {
-            Notification.requestPermission();
-        }
-
-        // Voices load asynchronously in some browsers
-        window.speechSynthesis && window.speechSynthesis.addEventListener("voiceschanged", () => { });
-
-        // =====================
-        // ALARM MANAGEMENT
-        // =====================
         function saveAlarms() {
             localStorage.setItem("studyAlarms", JSON.stringify(alarms));
         }
@@ -613,9 +281,6 @@
             status.innerText = `✅ Alarm set for ${time}${label ? " — " + label : ""}`;
             document.getElementById("alarmTime").value = "";
             document.getElementById("alarmLabel").value = "";
-
-            // Test voice confirmation
-            speak(`Alarm set for ${time}. ${label ? label : "Good luck studying!"}`);
         }
 
         function removeAlarm(idx) {
@@ -651,18 +316,6 @@
 
         renderAlarms();
     </script>
-
-    <style>
-        @keyframes flash {
-            from {
-                opacity: 1;
-            }
-
-            to {
-                opacity: 0.85;
-            }
-        }
-    </style>
 
 </body>
 
