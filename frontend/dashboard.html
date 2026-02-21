@@ -57,6 +57,35 @@
             align-items: center;
         }
 
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        /* Avatar / profile photo */
+        .header-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #4e73df;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+            border: 2px solid #e0e7ff;
+        }
+
+        .header-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -162,7 +191,6 @@
 </head>
 
 <body>
-
     <div class="sidebar">
         <h2>📚 StudyBuddy</h2>
         <a href="dashboard.html">🏠 Dashboard</a>
@@ -170,7 +198,7 @@
         <a href="session.html">⏱ Study Session</a>
         <a href="alarm.html">⏰ Alarm</a>
         <a href="progress.html">📊 Progress</a>
-        <a href="courses.html">📚 Courses</a>
+        <a href="courses.html">📚 My Subjects</a>
         <a href="weak.html">⚠️ Weak Areas</a>
         <a href="gamification.html">🎮 Gamification</a>
         <a href="ai_study.html">🤖 AI Assistant</a>
@@ -180,9 +208,14 @@
 
     <div class="main">
         <div class="header">
-            <div>
-                <h2 style="margin:0">Welcome, <span id="username">Student</span> 👋</h2>
-                <p style="margin:4px 0 0 0; color:#666;">Stay consistent and achieve your goals!</p>
+            <div class="header-left">
+                <div class="header-avatar" id="headerAvatar">
+                    <span id="headerInitial">?</span>
+                </div>
+                <div>
+                    <h2 style="margin:0">Welcome, <span id="username">Student</span> 👋</h2>
+                    <p style="margin:4px 0 0; color:#666;">Stay consistent and achieve your goals!</p>
+                </div>
             </div>
             <div>
                 Level: <strong id="level">—</strong> &nbsp;|&nbsp;
@@ -234,11 +267,22 @@
     <script>
         requireAuth();
 
-        // Populate username from localStorage immediately
+        const BACKEND = "http://127.0.0.1:5000";
         const storedName = localStorage.getItem("name");
         if (storedName) document.getElementById("username").innerText = storedName;
 
         async function loadDashboard() {
+            // Load profile for photo
+            const profile = await getProfile();
+            if (profile._ok) {
+                const avatar = document.getElementById("headerAvatar");
+                if (profile.profile_photo) {
+                    avatar.innerHTML = `<img src="${BACKEND + profile.profile_photo}" alt="Profile">`;
+                } else {
+                    document.getElementById("headerInitial").innerText = (profile.name || "U")[0].toUpperCase();
+                }
+            }
+
             const data = await getDashboardData();
             if (!data._ok) return;
 
@@ -261,9 +305,11 @@
             const msg = document.getElementById("planMsg");
             btn.disabled = true;
             msg.innerText = "Generating...";
+            msg.style.color = "#333";
 
             const res = await generateTimetable();
             if (res._ok) {
+                msg.style.color = "#28a745";
                 msg.innerText = "✅ " + (res.message || "Generated!");
                 await loadTimetable();
             } else {
@@ -297,7 +343,6 @@
         loadDashboard();
         loadTimetable();
     </script>
-
 </body>
 
 </html>

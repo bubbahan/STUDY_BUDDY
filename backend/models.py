@@ -24,9 +24,13 @@ class User(db.Model):
     xp = db.Column(db.Integer, default=0)
     streak = db.Column(db.Integer, default=0)
 
+    # NEW: profile photo path & alarm sound preference
+    profile_photo = db.Column(db.String(300), nullable=True)
+    alarm_sound = db.Column(db.String(50), default="classic")
+
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    subjects = db.relationship("Subject", backref="user", lazy=True)
+    subjects = db.relationship("Subject", backref="user", lazy=True, cascade="all, delete-orphan")
     sessions = db.relationship("StudySession", backref="user", lazy=True)
     enrollments = db.relationship("Enrollment", backref="user", lazy=True)
 
@@ -39,9 +43,32 @@ class Subject(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    units = db.Column(db.Integer)
+    units = db.Column(db.Integer, default=1)
+
+    # NEW fields
+    difficulty = db.Column(db.String(20), default="Medium")   # High / Medium / Low
+    frequency = db.Column(db.Integer, default=1)              # days per week slot weight
+    exam_date = db.Column(db.Date, nullable=True)             # per-subject exam date
+    study_goal = db.Column(db.String(100), nullable=True)     # e.g. "2 hrs/day"
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+
+    # Relationship to syllabus topics
+    syllabus = db.relationship("Syllabus", backref="subject", lazy=True, cascade="all, delete-orphan")
+
+
+# =========================
+# SYLLABUS MODEL (NEW)
+# =========================
+class Syllabus(db.Model):
+    __tablename__ = "syllabus"
+
+    id = db.Column(db.Integer, primary_key=True)
+    topic_name = db.Column(db.String(200), nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    subject_id = db.Column(db.Integer, db.ForeignKey("subjects.id"), nullable=False)
 
 
 # =========================
@@ -83,8 +110,8 @@ class WeakArea(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     subject = db.Column(db.String(100))
-    issue_type = db.Column(db.String(100))  # low_time, missed_target, etc.
-    severity = db.Column(db.String(50))  # low/medium/high
+    issue_type = db.Column(db.String(100))   # low_time, missed_target, etc.
+    severity = db.Column(db.String(50))      # low/medium/high
 
     detected_on = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -92,14 +119,14 @@ class WeakArea(db.Model):
 
 
 # =========================
-# COURSE MODEL
+# COURSE MODEL (kept for compatibility)
 # =========================
 class Course(db.Model):
     __tablename__ = "courses"
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150))
-    level = db.Column(db.Integer)  # 1 = Beginner, 2 = Intermediate
+    level = db.Column(db.Integer)
     total_units = db.Column(db.Integer)
     required_hours = db.Column(db.Integer)
 
@@ -107,7 +134,7 @@ class Course(db.Model):
 
 
 # =========================
-# ENROLLMENT MODEL
+# ENROLLMENT MODEL (kept for compatibility)
 # =========================
 class Enrollment(db.Model):
     __tablename__ = "enrollments"

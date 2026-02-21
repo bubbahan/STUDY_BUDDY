@@ -16,7 +16,6 @@
             background: #f4f7fb;
         }
 
-        /* ---- Sidebar ---- */
         .sidebar {
             width: 220px;
             height: 100vh;
@@ -50,7 +49,6 @@
             cursor: pointer;
         }
 
-        /* ---- Main ---- */
         .main {
             margin-left: 220px;
             padding: 24px;
@@ -61,13 +59,13 @@
             margin-bottom: 20px;
         }
 
-        /* ---- Settings Card ---- */
         .settings-card {
             background: white;
-            padding: 30px;
+            padding: 28px;
             border-radius: 10px;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            max-width: 560px;
+            max-width: 600px;
+            margin-bottom: 24px;
         }
 
         .settings-card h3 {
@@ -108,6 +106,7 @@
         input:disabled {
             background: #f9f9f9;
             color: #999;
+            cursor: not-allowed;
         }
 
         .row-2 {
@@ -136,17 +135,165 @@
             cursor: default;
         }
 
-        #msg {
-            margin-top: 12px;
-            font-size: 14px;
+        #msg,
+        #pwdMsg,
+        #photoMsg,
+        #soundMsg {
+            margin-top: 10px;
+            font-size: 13px;
             min-height: 18px;
         }
 
-        /* ---- Section divider ---- */
+        /* ---- Profile Photo ---- */
+        .photo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .avatar-wrap {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #4e73df;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+            border: 3px solid #e0e7ff;
+        }
+
+        .avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-info h3 {
+            margin: 0 0 4px;
+            font-size: 18px;
+        }
+
+        .photo-info p {
+            margin: 0;
+            color: #777;
+            font-size: 13px;
+        }
+
+        .photo-upload-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .photo-upload-row input[type="file"] {
+            padding: 6px;
+            font-size: 13px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .btn-upload {
+            padding: 9px 18px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-upload:hover {
+            background: #219a52;
+        }
+
+        /* ---- Sound Picker ---- */
+        .sound-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .sound-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px;
+            border: 2px solid #e0e7ff;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f8f9ff;
+            transition: border-color 0.15s, background 0.15s;
+            font-size: 13px;
+            user-select: none;
+        }
+
+        .sound-option:hover {
+            border-color: #4e73df;
+            background: #eef1ff;
+        }
+
+        .sound-option.selected {
+            border-color: #4e73df;
+            background: #e8edff;
+            font-weight: bold;
+            color: #2e59d9;
+        }
+
+        .sound-icon {
+            font-size: 17px;
+        }
+
+        .sound-name {
+            flex: 1;
+        }
+
+        .preview-btn {
+            background: #4e73df;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .preview-btn:hover {
+            background: #2e59d9;
+        }
+
+        .btn-save-sound {
+            margin-top: 12px;
+            padding: 9px 22px;
+            background: #4e73df;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-save-sound:hover {
+            background: #2e59d9;
+        }
+
         .divider {
             border: none;
             border-top: 1px solid #eee;
-            margin: 28px 0;
+            margin: 4px 0 24px;
         }
 
         .password-section h3 {
@@ -167,56 +314,18 @@
         .btn-pwd:hover {
             background: #c0392b;
         }
-
-        #pwdMsg {
-            margin-top: 10px;
-            font-size: 14px;
-            min-height: 18px;
-        }
-
-        /* ---- Profile Avatar ---- */
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            margin-bottom: 24px;
-        }
-
-        .avatar {
-            width: 64px;
-            height: 64px;
-            background: #4e73df;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .profile-meta h3 {
-            margin: 0;
-            font-size: 18px;
-        }
-
-        .profile-meta p {
-            margin: 4px 0 0;
-            color: #777;
-            font-size: 13px;
-        }
     </style>
 </head>
 
 <body>
-
     <div class="sidebar">
         <h2>📚 StudyBuddy</h2>
         <a href="dashboard.html">🏠 Dashboard</a>
         <a href="timetable.html">📅 Timetable</a>
         <a href="session.html">⏱ Study Session</a>
+        <a href="alarm.html">⏰ Alarm</a>
         <a href="progress.html">📊 Progress</a>
-        <a href="courses.html">📚 Courses</a>
+        <a href="courses.html">📚 My Subjects</a>
         <a href="weak.html">⚠️ Weak Areas</a>
         <a href="gamification.html">🎮 Gamification</a>
         <a href="ai_study.html">🤖 AI Assistant</a>
@@ -227,16 +336,30 @@
     <div class="main">
         <h2>⚙️ Settings</h2>
 
-        <!-- Profile Section -->
-        <div class="settings-card" id="profileCard">
-            <div class="profile-header">
-                <div class="avatar" id="avatarInitial">?</div>
-                <div class="profile-meta">
+        <!-- Profile Photo + Basic Info -->
+        <div class="settings-card">
+            <div class="photo-section">
+                <div class="avatar-wrap" id="avatarWrap">
+                    <span id="avatarInitial">?</span>
+                </div>
+                <div class="photo-info">
                     <h3 id="profileName">Loading...</h3>
                     <p id="profileEmail">—</p>
                 </div>
             </div>
-            <h3>Study Preferences</h3>
+
+            <!-- Photo upload -->
+            <div class="form-group">
+                <label>📸 Profile Photo</label>
+                <div class="photo-upload-row">
+                    <input type="file" id="photoFile" accept="image/*" onchange="previewPhoto(this)">
+                    <button class="btn-upload" onclick="uploadProfilePhoto()">⬆ Upload</button>
+                </div>
+                <div id="photoMsg"></div>
+            </div>
+
+            <hr class="divider">
+            <h3>👤 Study Preferences</h3>
 
             <div class="form-group">
                 <label>Full Name</label>
@@ -244,8 +367,8 @@
             </div>
 
             <div class="form-group">
-                <label>Email (read-only)</label>
-                <input type="email" id="settingEmail" disabled>
+                <label>Email</label>
+                <input type="email" id="settingEmail" placeholder="your@email.com">
             </div>
 
             <div class="row-2">
@@ -274,7 +397,7 @@
             </div>
 
             <div class="form-group">
-                <label>Exam Date</label>
+                <label>Overall Exam Date (fallback)</label>
                 <input type="date" id="settingExam">
             </div>
 
@@ -282,12 +405,43 @@
             <button class="btn-save" id="saveBtn" onclick="saveSettings()">💾 Save Changes</button>
         </div>
 
-        <hr class="divider">
+        <!-- Alarm Sound -->
+        <div class="settings-card">
+            <h3>🔔 Alarm Sound Preference</h3>
+            <div class="sound-grid" id="soundGrid">
+                <div class="sound-option selected" data-sound="classic" onclick="selectSound(this)">
+                    <span class="sound-icon">🔔</span>
+                    <span class="sound-name">Classic</span>
+                    <button class="preview-btn" onclick="event.stopPropagation(); previewSound('classic')">▶</button>
+                </div>
+                <div class="sound-option" data-sound="bell" onclick="selectSound(this)">
+                    <span class="sound-icon">🎵</span>
+                    <span class="sound-name">School Bell</span>
+                    <button class="preview-btn" onclick="event.stopPropagation(); previewSound('bell')">▶</button>
+                </div>
+                <div class="sound-option" data-sound="chime" onclick="selectSound(this)">
+                    <span class="sound-icon">✨</span>
+                    <span class="sound-name">Gentle Chime</span>
+                    <button class="preview-btn" onclick="event.stopPropagation(); previewSound('chime')">▶</button>
+                </div>
+                <div class="sound-option" data-sound="buzz" onclick="selectSound(this)">
+                    <span class="sound-icon">📳</span>
+                    <span class="sound-name">Digital Buzz</span>
+                    <button class="preview-btn" onclick="event.stopPropagation(); previewSound('buzz')">▶</button>
+                </div>
+                <div class="sound-option" data-sound="rising" onclick="selectSound(this)">
+                    <span class="sound-icon">🚀</span>
+                    <span class="sound-name">Rising Alert</span>
+                    <button class="preview-btn" onclick="event.stopPropagation(); previewSound('rising')">▶</button>
+                </div>
+            </div>
+            <button class="btn-save-sound" onclick="saveSoundPref()">💾 Save Sound</button>
+            <div id="soundMsg"></div>
+        </div>
 
-        <!-- Password Section -->
-        <div class="settings-card password-section" style="margin-top:0;">
+        <!-- Change Password -->
+        <div class="settings-card password-section">
             <h3>🔒 Change Password</h3>
-
             <div class="form-group">
                 <label>New Password</label>
                 <input type="password" id="newPwd" placeholder="Enter new password">
@@ -296,7 +450,6 @@
                 <label>Confirm Password</label>
                 <input type="password" id="confirmPwd" placeholder="Confirm new password">
             </div>
-
             <div id="pwdMsg"></div>
             <button class="btn-pwd" onclick="changePassword()">🔒 Update Password</button>
         </div>
@@ -306,31 +459,93 @@
     <script>
         requireAuth();
 
-        // Load profile from backend
+        const BASE = "http://127.0.0.1:5000";
+        let selectedSound = "classic";
+
+        // ========================
+        // LOAD PROFILE
+        // ========================
         async function loadProfile() {
-            const data = await apiRequest("/api/user/profile", "GET", null, true);
+            const data = await getProfile();
             if (!data._ok) return;
 
             document.getElementById("profileName").innerText = data.name || "User";
             document.getElementById("profileEmail").innerText = data.email || "";
-            document.getElementById("avatarInitial").innerText = (data.name || "U")[0].toUpperCase();
-
             document.getElementById("settingName").value = data.name || "";
             document.getElementById("settingEmail").value = data.email || "";
             document.getElementById("settingHours").value = data.study_hours_per_day || 4;
             document.getElementById("settingPreference").value = data.preference || "morning";
             document.getElementById("settingSleep").value = data.sleep_time || "23:00";
             document.getElementById("settingWake").value = data.wake_time || "07:00";
-            if (data.exam_date) {
-                document.getElementById("settingExam").value = data.exam_date;
+            if (data.exam_date) document.getElementById("settingExam").value = data.exam_date;
+
+            // Photo
+            const wrap = document.getElementById("avatarWrap");
+            if (data.profile_photo) {
+                wrap.innerHTML = `<img src="${BASE + data.profile_photo}" alt="Profile Photo">`;
+            } else {
+                document.getElementById("avatarInitial").innerText = (data.name || "U")[0].toUpperCase();
+            }
+
+            // Alarm sound
+            if (data.alarm_sound) {
+                selectedSound = data.alarm_sound;
+                document.querySelectorAll(".sound-option").forEach(o => o.classList.remove("selected"));
+                const el = document.querySelector(`.sound-option[data-sound="${selectedSound}"]`);
+                if (el) el.classList.add("selected");
             }
         }
 
-        // Save settings — re-registers the update via auth register fields
-        // Since there's no dedicated update endpoint, we show the changes locally
-        // and store study preferences in localStorage for now.
+        // ========================
+        // PHOTO PREVIEW
+        // ========================
+        function previewPhoto(input) {
+            if (!input.files || !input.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const wrap = document.getElementById("avatarWrap");
+                wrap.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        // ========================
+        // UPLOAD PHOTO
+        // ========================
+        async function uploadProfilePhoto() {
+            const fileInput = document.getElementById("photoFile");
+            const msg = document.getElementById("photoMsg");
+
+            if (!fileInput.files || !fileInput.files[0]) {
+                msg.style.color = "red";
+                msg.innerText = "Please select a photo first.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("photo", fileInput.files[0]);
+
+            msg.style.color = "#333";
+            msg.innerText = "Uploading...";
+
+            const res = await uploadPhoto(formData);
+            if (res._ok) {
+                msg.style.color = "#27ae60";
+                msg.innerText = "✅ Photo uploaded!";
+                const wrap = document.getElementById("avatarWrap");
+                wrap.innerHTML = `<img src="${BASE + res.profile_photo}?t=${Date.now()}" alt="Profile Photo">`;
+            } else {
+                msg.style.color = "red";
+                msg.innerText = "❌ " + (res.message || "Upload failed.");
+            }
+        }
+
+        // ========================
+        // SAVE SETTINGS
+        // ========================
         async function saveSettings() {
             const name = document.getElementById("settingName").value.trim();
+            const email = document.getElementById("settingEmail").value.trim();
             const hours = document.getElementById("settingHours").value;
             const preference = document.getElementById("settingPreference").value;
             const sleep = document.getElementById("settingSleep").value;
@@ -349,21 +564,18 @@
             msgEl.style.color = "#333";
             msgEl.innerText = "Saving...";
 
-            // Hit the update profile endpoint (we'll add it if missing)
             const res = await apiRequest("/api/user/update", "PUT", {
-                name,
+                name, email: email || undefined,
                 study_hours_per_day: parseInt(hours),
-                preference,
-                sleep_time: sleep,
-                wake_time: wake,
+                preference, sleep_time: sleep, wake_time: wake,
                 exam_date: exam || null
             }, true);
 
             if (res._ok) {
                 localStorage.setItem("name", name);
                 document.getElementById("profileName").innerText = name;
-                document.getElementById("avatarInitial").innerText = name[0].toUpperCase();
-                msgEl.style.color = "#28a745";
+                document.getElementById("profileEmail").innerText = email;
+                msgEl.style.color = "#27ae60";
                 msgEl.innerText = "✅ Settings saved!";
             } else {
                 msgEl.style.color = "red";
@@ -372,6 +584,93 @@
             btn.disabled = false;
         }
 
+        // ========================
+        // ALARM SOUND
+        // ========================
+        function selectSound(el) {
+            document.querySelectorAll(".sound-option").forEach(o => o.classList.remove("selected"));
+            el.classList.add("selected");
+            selectedSound = el.dataset.sound;
+        }
+
+        async function saveSoundPref() {
+            const msg = document.getElementById("soundMsg");
+            msg.style.color = "#333";
+            msg.innerText = "Saving...";
+            const res = await saveAlarmSound(selectedSound);
+            if (res._ok) {
+                localStorage.setItem("alarmSound", selectedSound);
+                msg.style.color = "#27ae60";
+                msg.innerText = "✅ Sound preference saved!";
+            } else {
+                msg.style.color = "red";
+                msg.innerText = "❌ " + (res.message || "Failed.");
+            }
+        }
+
+        // Sound preview engine (same as alarm.html)
+        function previewSound(sound) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const fns = {
+                    classic(c) {
+                        const o = c.createOscillator(), g = c.createGain();
+                        o.connect(g); g.connect(c.destination); o.type = "sine";
+                        o.frequency.setValueAtTime(880, c.currentTime);
+                        o.frequency.setValueAtTime(660, c.currentTime + 0.15);
+                        o.frequency.setValueAtTime(880, c.currentTime + 0.30);
+                        g.gain.setValueAtTime(0.6, c.currentTime);
+                        g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.65);
+                        o.start(c.currentTime); o.stop(c.currentTime + 0.65);
+                    },
+                    bell(c) {
+                        [440, 880, 1320, 1760].forEach((f, i) => {
+                            const o = c.createOscillator(), g = c.createGain();
+                            o.connect(g); g.connect(c.destination); o.type = "sine";
+                            o.frequency.setValueAtTime(f, c.currentTime);
+                            g.gain.setValueAtTime(0.4 / (i + 1), c.currentTime);
+                            g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 1.5);
+                            o.start(c.currentTime); o.stop(c.currentTime + 1.5);
+                        });
+                    },
+                    chime(c) {
+                        [523, 659, 784, 1047].forEach((f, i) => {
+                            const o = c.createOscillator(), g = c.createGain();
+                            o.connect(g); g.connect(c.destination); o.type = "triangle";
+                            o.frequency.setValueAtTime(f, c.currentTime + i * 0.18);
+                            g.gain.setValueAtTime(0, c.currentTime + i * 0.18);
+                            g.gain.linearRampToValueAtTime(0.4, c.currentTime + i * 0.18 + 0.04);
+                            g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + i * 0.18 + 0.8);
+                            o.start(c.currentTime + i * 0.18); o.stop(c.currentTime + i * 0.18 + 0.8);
+                        });
+                    },
+                    buzz(c) {
+                        for (let i = 0; i < 3; i++) {
+                            const o = c.createOscillator(), g = c.createGain();
+                            o.connect(g); g.connect(c.destination); o.type = "square";
+                            o.frequency.setValueAtTime(440, c.currentTime + i * 0.22);
+                            g.gain.setValueAtTime(0.3, c.currentTime + i * 0.22);
+                            g.gain.setValueAtTime(0, c.currentTime + i * 0.22 + 0.15);
+                            o.start(c.currentTime + i * 0.22); o.stop(c.currentTime + i * 0.22 + 0.15);
+                        }
+                    },
+                    rising(c) {
+                        const o = c.createOscillator(), g = c.createGain();
+                        o.connect(g); g.connect(c.destination); o.type = "sawtooth";
+                        o.frequency.setValueAtTime(200, c.currentTime);
+                        o.frequency.linearRampToValueAtTime(1200, c.currentTime + 0.8);
+                        g.gain.setValueAtTime(0.5, c.currentTime);
+                        g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.85);
+                        o.start(c.currentTime); o.stop(c.currentTime + 0.85);
+                    }
+                };
+                (fns[sound] || fns.classic)(ctx);
+            } catch (e) { }
+        }
+
+        // ========================
+        // CHANGE PASSWORD
+        // ========================
         async function changePassword() {
             const newPwd = document.getElementById("newPwd").value;
             const confirm = document.getElementById("confirmPwd").value;
@@ -390,7 +689,7 @@
 
             const res = await apiRequest("/api/user/change-password", "POST", { password: newPwd }, true);
             if (res._ok) {
-                msg.style.color = "#28a745";
+                msg.style.color = "#27ae60";
                 msg.innerText = "✅ Password updated!";
                 document.getElementById("newPwd").value = "";
                 document.getElementById("confirmPwd").value = "";
@@ -402,7 +701,6 @@
 
         loadProfile();
     </script>
-
 </body>
 
 </html>
