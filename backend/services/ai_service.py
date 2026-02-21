@@ -55,29 +55,48 @@ class AIService:
     # ------------------------------------------------------------------
     @staticmethod
     def generate_timetable(
-        subjects: list,
+        subject_details: list,          # [{name, priority, notes}, ...]
         study_hours_per_day: int,
         days_remaining: int,
         preference: str,
         exam_date: str,
+        extra_instructions: str = "",
         api_key_override: str = None
     ) -> str:
-        subject_list = ", ".join(subjects) if subjects else "General Studies"
+        # Build a subject block with priorities and notes
+        subject_lines = []
+        for s in subject_details:
+            name = s.get("name", "Unknown")
+            priority = s.get("priority", "Medium")
+            notes = s.get("notes", "").strip()
+            line = f"- {name} (Priority: {priority})"
+            if notes:
+                line += f" — Notes: {notes}"
+            subject_lines.append(line)
+        subject_block = "\n".join(subject_lines) if subject_lines else "- General Studies (Priority: Medium)"
+
+        extra = f"\n\nAdditional instructions from student:\n{extra_instructions.strip()}" if extra_instructions.strip() else ""
+
         prompt = f"""You are an expert academic planner and study coach.
 
 A student needs a detailed study timetable with the following details:
-- Subjects: {subject_list}
+
+**Subjects & Priorities:**
+{subject_block}
+
+**Study settings:**
 - Available study hours per day: {study_hours_per_day} hours
 - Study preference: {preference} (morning or night)
 - Days remaining until exam: {days_remaining} days
 - Exam date: {exam_date}
+{extra}
 
 Please generate:
-1. A **weekly study schedule** (Mon-Sun) as a markdown table showing which subject to study each day and for how many hours.
+1. A **weekly study schedule** (Mon-Sun) as a markdown table. Allocate more time to High-priority subjects. Show subject + hours per day.
 2. **Priority ranking** of subjects from most to least important.
-3. **3 specific actionable tips** for this student's timeline and preference.
+3. **3 specific actionable tips** based on the timeline and preferences.
 
-Be concise, practical, and encouraging."""
+Be concise, practical, and encouraging. Use markdown formatting."""
 
         messages = [
             {"role": "system", "content": "You are a helpful academic planning assistant. Always format with markdown."},

@@ -9,6 +9,6 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = False  # Tokens don't expire during development
 
     # OpenRouter AI API
-    OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY") or "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"
-    OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL") or "openai/gpt-3.5-turbo"
+    OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY") or "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"
+    OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL") or "stepfun/step-3.5-flash:free"
     OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions"

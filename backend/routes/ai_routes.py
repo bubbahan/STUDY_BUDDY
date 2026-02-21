@@ -14,37 +14,58 @@ ai_bp = Blueprint("ai", __name__)
 @ai_bp.route("/timetable", methods=["POST"])
 @jwt_required()
 def ai_timetable():
-    """Generate an AI-powered personalized timetable."""
+    """Generate an AI-powered personalized timetable.
+    Accepts optional JSON body to override defaults with custom inputs.
+    """
     user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
-
     if not user:
         return jsonify({"message": "User not found"}), 404
 
-    subjects = Subject.query.filter_by(user_id=user_id).all()
-    subject_names = [s.name for s in subjects]
+    data = request.get_json(silent=True) or {}
 
-    if not subject_names:
-        return jsonify({"message": "No subjects found. Add subjects during registration."}), 400
+    # --- Custom subjects from the frontend (with priorities) ---
+    custom_subjects = data.get("subjects")   # list of {name, priority, notes}
+    if custom_subjects:
+        subject_details = custom_subjects
+    else:
+        db_subjects = Subject.query.filter_by(user_id=user_id).all()
+        if not db_subjects:
+            return jsonify({"message": "No subjects found. Add subjects first."}), 400
+        subject_details = [{"name": s.name, "priority": "Medium", "notes": ""} for s in db_subjects]
 
-    if not user.exam_date:
-        return jsonify({"message": "No exam date set. Update it in Settings first."}), 400
+    # --- Timeline ---
+    custom_exam_date = data.get("exam_date")
+    if custom_exam_date:
+        try:
+            from datetime import datetime
+            exam_dt = datetime.strptime(custom_exam_date, "%Y-%m-%d").date()
+            days_remaining = (exam_dt - date.today()).days
+            exam_date_str = custom_exam_date
+        except ValueError:
+            return jsonify({"message": "Invalid exam date format (use YYYY-MM-DD)"}), 400
+    elif user.exam_date:
+        days_remaining = (user.exam_date - date.today()).days
+        exam_date_str = str(user.exam_date)
+    else:
+        return jsonify({"message": "No exam date set. Update it in Settings or enter one above."}), 400
 
-    days_remaining = (user.exam_date - date.today()).days
     if days_remaining <= 0:
-        return jsonify({"message": "Exam date has already passed. Update it in Settings."}), 400
+        return jsonify({"message": "Exam date has already passed. Update it in Settings or enter a future date."}), 400
 
-    # Get user's API key from header (browser stores it locally, sends per-request)
-    user_api_key = request.headers.get("X-OpenRouter-Key", "").strip()
+    # --- Other params ---
+    study_hours = data.get("study_hours") or user.study_hours_per_day or 4
+    preference = data.get("preference") or user.preference or "morning"
+    extra_instructions = data.get("instructions", "")
 
     try:
         result = AIService.generate_timetable(
-            subjects=subject_names,
-            study_hours_per_day=user.study_hours_per_day or 4,
+            subject_details=subject_details,
+            study_hours_per_day=study_hours,
             days_remaining=days_remaining,
-            preference=user.preference or "morning",
-            exam_date=str(user.exam_date),
-            api_key_override=user_api_key or None
+            preference=preference,
+            exam_date=exam_date_str,
+            extra_instructions=extra_instructions
         )
         return jsonify({"result": result})
     except RuntimeError as e:
@@ -57,10 +78,9 @@ def ai_timetable():
 @ai_bp.route("/tips", methods=["POST"])
 @jwt_required()
 def ai_tips():
-    """Get personalized AI study tips based on user stats."""
+    """Get personalized AI study tips."""
     user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
-
     if not user:
         return jsonify({"message": "User not found"}), 404
 
@@ -75,20 +95,14 @@ def ai_tips():
 
     stress = "High" if prep_pct < 40 else ("Medium" if prep_pct < 70 else "Low")
 
-    # Collect weak areas
     weak_areas = []
     for s in sessions:
         if s.actual_time is not None and s.planned_time and s.planned_time > 0:
             if s.actual_time / s.planned_time < 0.7 and s.subject not in weak_areas:
                 weak_areas.append(s.subject)
-
-    saved_weak = WeakArea.query.filter_by(user_id=user_id).all()
-    for w in saved_weak:
+    for w in WeakArea.query.filter_by(user_id=user_id).all():
         if w.subject not in weak_areas:
             weak_areas.append(w.subject)
-
-    # Get user's API key from header
-    user_api_key = request.headers.get("X-OpenRouter-Key", "").strip()
 
     try:
         result = AIService.get_study_tips(
@@ -98,8 +112,7 @@ def ai_tips():
             stress_level=stress,
             streak=user.streak or 0,
             total_sessions=len(sessions),
-            weak_areas=weak_areas,
-            api_key_override=user_api_key or None
+            weak_areas=weak_areas
         )
         return jsonify({"result": result})
     except RuntimeError as e:
