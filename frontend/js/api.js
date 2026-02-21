@@ -34,8 +34,8 @@ async function apiRequest(endpoint, method = "GET", data = null, auth = false) {
         json._status = response.status;
         json._ok = response.ok;
 
-        // If we get a 401 on an authenticated call, the token is stale — force login
-        if (response.status === 401 && auth) {
+        // If we get a 401/422 on an authenticated call, the token is stale — force login
+        if ((response.status === 401 || response.status === 422) && auth) {
             localStorage.clear();
             window.location.href = "login.html";
             return json;
@@ -45,6 +45,22 @@ async function apiRequest(endpoint, method = "GET", data = null, auth = false) {
     } catch (error) {
         console.error("API Error:", error);
         return { _ok: false, message: "Network error" };
+    }
+}
+
+// Multipart (for file uploads — no JSON Content-Type)
+async function apiUpload(endpoint, formData) {
+    try {
+        const response = await fetch(BASE_URL + endpoint, {
+            method: "POST",
+            headers: { "Authorization": "Bearer " + getToken() },
+            body: formData
+        });
+        const json = await response.json();
+        json._ok = response.ok;
+        return json;
+    } catch (e) {
+        return { _ok: false, message: "Upload error" };
     }
 }
 
@@ -97,7 +113,7 @@ function getSessions() {
 }
 
 // =============================
-// COURSES
+// COURSES (legacy)
 // =============================
 
 function getCourses() {
@@ -110,6 +126,66 @@ function enrollCourse(courseId) {
 
 function updateCourseProgress(courseId, units) {
     return apiRequest("/api/courses/progress/" + courseId, "POST", { units_completed: units }, true);
+}
+
+// =============================
+// SUBJECTS (with new fields)
+// =============================
+
+function getSubjects() {
+    return apiRequest("/api/subjects/", "GET", null, true);
+}
+
+function getSubject(id) {
+    return apiRequest(`/api/subjects/${id}`, "GET", null, true);
+}
+
+function addSubject(data) {
+    return apiRequest("/api/subjects/", "POST", data, true);
+}
+
+function updateSubject(id, data) {
+    return apiRequest(`/api/subjects/${id}`, "PUT", data, true);
+}
+
+function deleteSubject(id) {
+    return apiRequest(`/api/subjects/${id}`, "DELETE", null, true);
+}
+
+// =============================
+// SYLLABUS
+// =============================
+
+function getSyllabus(subjectId) {
+    return apiRequest(`/api/syllabus/${subjectId}`, "GET", null, true);
+}
+
+function addTopic(subjectId, topicName) {
+    return apiRequest(`/api/syllabus/${subjectId}`, "POST", { topic_name: topicName }, true);
+}
+
+function toggleTopic(topicId) {
+    return apiRequest(`/api/syllabus/${topicId}/toggle`, "PUT", null, true);
+}
+
+function deleteTopic(topicId) {
+    return apiRequest(`/api/syllabus/${topicId}`, "DELETE", null, true);
+}
+
+// =============================
+// USER / SETTINGS
+// =============================
+
+function uploadPhoto(formData) {
+    return apiUpload("/api/user/upload-photo", formData);
+}
+
+function saveAlarmSound(sound) {
+    return apiRequest("/api/user/update", "PUT", { alarm_sound: sound }, true);
+}
+
+function getProfile() {
+    return apiRequest("/api/user/profile", "GET", null, true);
 }
 
 // =============================

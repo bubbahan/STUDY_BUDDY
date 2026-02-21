@@ -1,10 +1,18 @@
-from flask import Blueprint, jsonify, request
+import os
+from flask import Blueprint, jsonify, request, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash
+from werkzeug.utils import secure_filename
 from models import User
 from database import db
 
 user_bp = Blueprint("user", __name__)
+
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 # =============================
 # GET PROFILE
@@ -12,7 +20,7 @@ user_bp = Blueprint("user", __name__)
 @user_bp.route("/profile", methods=["GET"])
 @jwt_required()
 def get_profile():
-    user_id = int(get_jwt_identity())   # FIXED: cast to int
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
 
     if not user:
@@ -28,7 +36,9 @@ def get_profile():
         "study_hours_per_day": user.study_hours_per_day or 4,
         "preference": user.preference or "morning",
         "sleep_time": user.sleep_time or "23:00",
-        "wake_time": user.wake_time or "07:00"
+        "wake_time": user.wake_time or "07:00",
+        "profile_photo": user.profile_photo or None,
+        "alarm_sound": user.alarm_sound or "default"
     })
 
 
@@ -38,7 +48,7 @@ def get_profile():
 @user_bp.route("/update", methods=["PUT"])
 @jwt_required()
 def update_profile():
-    user_id = int(get_jwt_identity())   # FIXED: cast to int
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
 
     if not user:
@@ -68,8 +78,59 @@ def update_profile():
         else:
             user.exam_date = None
 
+    # Editable email
+    if "email" in data and data["email"]:
+        new_email = data["email"].strip().lower()
+        if new_email != user.email:
+            existing = User.query.filter_by(email=new_email).first()
+            if existing:
+                return jsonify({"message": "Email already in use by another account."}), 400
+            user.email = new_email
+
+    # Alarm sound
+    if "alarm_sound" in data:
+        user.alarm_sound = data["alarm_sound"]
+
     db.session.commit()
     return jsonify({"message": "Profile updated successfully"})
+
+
+# =============================
+# UPLOAD PROFILE PHOTO
+# =============================
+@user_bp.route("/upload-photo", methods=["POST"])
+@jwt_required()
+def upload_photo():
+    user_id = int(get_jwt_identity())
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    if "photo" not in request.files:
+        return jsonify({"message": "No photo file provided"}), 400
+
+    file = request.files["photo"]
+    if file.filename == "":
+        return jsonify({"message": "No file selected"}), 400
+
+    if not allowed_file(file.filename):
+        return jsonify({"message": "File type not allowed. Use PNG, JPG, GIF, or WebP."}), 400
+
+    # Save file with unique name
+    ext = file.filename.rsplit(".", 1)[1].lower()
+    filename = f"user_{user_id}_photo.{ext}"
+    safe_name = secure_filename(filename)
+    filepath = os.path.join(current_app.config["UPLOAD_FOLDER"], safe_name)
+
+    file.save(filepath)
+
+    # Store relative URL path
+    photo_url = f"/uploads/{safe_name}"
+    user.profile_photo = photo_url
+    db.session.commit()
+
+    return jsonify({"message": "Photo uploaded", "photo_url": photo_url})
 
 
 # =============================
@@ -78,7 +139,7 @@ def update_profile():
 @user_bp.route("/change-password", methods=["POST"])
 @jwt_required()
 def change_password():
-    user_id = int(get_jwt_identity())   # FIXED: cast to int
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
 
     if not user:

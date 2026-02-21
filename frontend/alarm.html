@@ -5,80 +5,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Alarm - StudyBuddy</title>
+    <link rel="stylesheet" href="css/style.css">
     <style>
-        * {
-            box-sizing: border-box;
+        .page-header {
+            margin-bottom: 24px;
         }
 
-        body {
+        .page-header h2 {
+            color: var(--primary);
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
         }
 
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background: #4e73df;
-            color: white;
-            position: fixed;
-            padding-top: 20px;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 18px;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 12px 20px;
-            color: white;
-            text-decoration: none;
+        .page-header p {
+            color: var(--text-muted);
             font-size: 14px;
+            margin: 4px 0 0;
         }
 
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: #2e59d9;
+        .alarm-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            max-width: 900px;
         }
 
-        .logout {
-            cursor: pointer;
-        }
-
-        .main {
-            margin-left: 220px;
-            padding: 24px;
-        }
-
-        h2 {
-            color: #4e73df;
-            margin-bottom: 20px;
+        @media (max-width: 860px) {
+            .alarm-container {
+                grid-template-columns: 1fr;
+            }
         }
 
         .alarm-card {
-            background: white;
+            background: var(--surface);
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            max-width: 440px;
-        }
-
-        .alarm-card h3 {
-            margin: 0 0 20px;
-            color: #4e73df;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .clock-display {
-            font-size: 52px;
-            font-weight: bold;
-            text-align: center;
-            color: #4e73df;
-            letter-spacing: 2px;
-            margin: 18px 0;
+            font-size: 56px;
+            font-weight: 800;
+            color: var(--primary);
             font-variant-numeric: tabular-nums;
+            margin: 20px 0;
+            text-shadow: 0 4px 12px rgba(78, 115, 223, 0.15);
+        }
+
+        .alarm-form {
+            width: 100%;
         }
 
         .form-group {
@@ -87,95 +65,170 @@
 
         label {
             display: block;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #444;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
         }
 
         input[type="time"] {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 18px;
-            color: #333;
+            padding: 12px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 20px;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: #fafbff;
         }
 
         input[type="text"] {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            padding: 12px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
             font-size: 14px;
-        }
-
-        .btn-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 14px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 11px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            color: white;
+            font-family: 'Inter', sans-serif;
         }
 
         .btn-set {
-            background: #4e73df;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(78, 115, 223, 0.3);
         }
 
         .btn-set:hover {
-            background: #2e59d9;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(78, 115, 223, 0.4);
         }
 
-        .btn-clear {
-            background: #6c757d;
-        }
-
-        .btn-clear:hover {
-            background: #5a6268;
-        }
-
-        .alarm-list {
-            margin-top: 20px;
-        }
-
-        .alarm-list h4 {
-            color: #4e73df;
-            margin-bottom: 10px;
-        }
-
-        .alarm-item {
+        .sound-badge {
+            margin-top: 14px;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 6px 14px;
             background: #f0f4ff;
-            border-radius: 8px;
-            padding: 10px 14px;
-            margin-bottom: 8px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .alarm-list-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .list-header {
+            padding: 16px 24px;
+            background: #f8f9fc;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .list-header h4 {
+            margin: 0;
+            color: var(--text);
             font-size: 14px;
         }
 
-        .remove-btn {
+        .btn-clear {
             background: none;
             border: none;
+            color: var(--danger);
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
-            color: #e74c3c;
-            font-size: 16px;
-            padding: 0 4px;
         }
 
-        #alarmStatus {
+        .alarms-scroll {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .alarm-item {
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        .alarm-item:last-child {
+            border-bottom: none;
+        }
+
+        .alarm-info h5 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--primary);
+        }
+
+        .alarm-info p {
+            margin: 2px 0 0;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .btn-remove {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #fff0f0;
+            color: var(--danger);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-remove:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .empty-alarms {
             text-align: center;
-            margin-top: 10px;
-            font-size: 14px;
-            min-height: 18px;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* Animation when alarm fires */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .ringing {
+            animation: pulse 0.5s infinite;
+            color: var(--danger) !important;
         }
     </style>
 </head>
@@ -187,8 +240,9 @@
         <a href="dashboard.html">🏠 Dashboard</a>
         <a href="timetable.html">📅 Timetable</a>
         <a href="session.html">⏱ Study Session</a>
+        <a href="alarm.html" class="active">⏰ Alarm</a>
         <a href="progress.html">📊 Progress</a>
-        <a href="courses.html">📚 Courses</a>
+        <a href="courses.html">📚 My Subjects</a>
         <a href="weak.html">⚠️ Weak Areas</a>
         <a href="gamification.html">🎮 Gamification</a>
         <a href="ai_study.html">🤖 AI Assistant</a>
@@ -197,33 +251,44 @@
     </div>
 
     <div class="main">
-        <h2>⏰ Study Alarm</h2>
+        <div class="page-header animate-fade">
+            <h2>⏰ Study Alarm</h2>
+            <p>Stay on track with personalized reminders</p>
+        </div>
 
-        <div class="alarm-card">
-            <h3>Set a Study Reminder</h3>
+        <div class="alarm-container">
+            <!-- Set Alarm Card -->
+            <div class="alarm-card animate-fade">
+                <div class="clock-display" id="currentTime">--:--:--</div>
 
-            <div class="clock-display" id="currentTime">--:--:--</div>
+                <div class="alarm-form">
+                    <div class="form-group">
+                        <label>Target Time</label>
+                        <input type="time" id="alarmTime">
+                    </div>
+                    <div class="form-group">
+                        <label>Remainder Label</label>
+                        <input type="text" id="alarmLabel" placeholder="e.g. Start Thermodynamics">
+                    </div>
+                    <button class="btn-set" onclick="setAlarm()">🔔 Set Alarm</button>
 
-            <div class="form-group">
-                <label>Alarm Time</label>
-                <input type="time" id="alarmTime">
+                    <div class="sound-badge">
+                        <span>🔊 Active Sound:</span>
+                        <strong id="activeSoundName">Default Bell</strong>
+                    </div>
+                </div>
+                <div id="statusMsg" style="margin-top: 15px; font-size: 13px;"></div>
             </div>
 
-            <div class="form-group">
-                <label>Label (optional)</label>
-                <input type="text" id="alarmLabel" placeholder="e.g. Start Math session">
-            </div>
-
-            <div class="btn-row">
-                <button class="btn btn-set" onclick="setAlarm()">⏰ Set Alarm</button>
-                <button class="btn btn-clear" onclick="clearAll()">🗑 Clear All</button>
-            </div>
-
-            <div id="alarmStatus"></div>
-
-            <div class="alarm-list" id="alarmList" style="display:none;">
-                <h4>Active Alarms</h4>
-                <div id="alarmsContainer"></div>
+            <!-- Active Alarms Card -->
+            <div class="alarm-list-card animate-fade" style="animation-delay: 0.1s">
+                <div class="list-header">
+                    <h4>Active Reminders</h4>
+                    <button class="btn-clear" onclick="clearAllAlarms()">Clear All</button>
+                </div>
+                <div class="alarms-scroll" id="alarmsList">
+                    <div class="empty-alarms">No active alarms set.</div>
+                </div>
             </div>
         </div>
     </div>
@@ -233,90 +298,108 @@
         requireAuth();
 
         let alarms = JSON.parse(localStorage.getItem("studyAlarms") || "[]");
-        let alarmInterval;
+        let activeSound = "default";
 
-        // Live clock
+        async function fetchSettings() {
+            const data = await getProfile();
+            if (data && data._ok) {
+                activeSound = data.alarm_sound || "default";
+                document.getElementById("activeSoundName").innerText = activeSound.charAt(0).toUpperCase() + activeSound.slice(1);
+            }
+        }
+
         function updateClock() {
             const now = new Date();
-            const h = String(now.getHours()).padStart(2, "0");
-            const m = String(now.getMinutes()).padStart(2, "0");
-            const s = String(now.getSeconds()).padStart(2, "0");
-            document.getElementById("currentTime").innerText = `${h}:${m}:${s}`;
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const clockEl = document.getElementById("currentTime");
+            clockEl.innerText = `${h}:${m}:${s}`;
 
-            // Check alarms
             const hm = `${h}:${m}`;
-            alarms.forEach(a => {
+            let fired = false;
+
+            alarms.forEach((a, idx) => {
                 if (a.time === hm && !a.fired) {
                     a.fired = true;
-                    saveAlarms();
-                    const label = a.label ? `\n📌 ${a.label}` : "";
-                    alert(`⏰ Study Alarm!${label}\n\nTime to study!`);
+                    fired = true;
+                    clockEl.classList.add("ringing");
+
+                    // Simple sound simulation
+                    console.log(`PLAYING SOUND: ${activeSound}`);
+
+                    setTimeout(() => {
+                        alert(`⏰ STUDY ALARM!\n\n${a.label || 'Time to study!'}\n\nSound: ${activeSound}`);
+                        clockEl.classList.remove("ringing");
+                    }, 100);
                 }
             });
+
+            if (fired) {
+                localStorage.setItem("studyAlarms", JSON.stringify(alarms));
+                renderAlarms();
+            }
         }
 
         setInterval(updateClock, 1000);
         updateClock();
 
-        function saveAlarms() {
-            localStorage.setItem("studyAlarms", JSON.stringify(alarms));
-        }
-
         function setAlarm() {
             const time = document.getElementById("alarmTime").value;
             const label = document.getElementById("alarmLabel").value.trim();
-            const status = document.getElementById("alarmStatus");
+            const msg = document.getElementById("statusMsg");
 
             if (!time) {
-                status.style.color = "red";
-                status.innerText = "Please select a time.";
+                msg.style.color = "var(--danger)";
+                msg.innerText = "Please select a time.";
                 return;
             }
 
             alarms.push({ time, label, fired: false });
-            saveAlarms();
+            localStorage.setItem("studyAlarms", JSON.stringify(alarms));
             renderAlarms();
 
-            status.style.color = "#28a745";
-            status.innerText = `✅ Alarm set for ${time}${label ? " — " + label : ""}`;
+            msg.style.color = "var(--accent)";
+            msg.innerText = "✅ Alarm set successfully!";
             document.getElementById("alarmTime").value = "";
             document.getElementById("alarmLabel").value = "";
+            setTimeout(() => msg.innerText = "", 3000);
         }
 
         function removeAlarm(idx) {
             alarms.splice(idx, 1);
-            saveAlarms();
+            localStorage.setItem("studyAlarms", JSON.stringify(alarms));
             renderAlarms();
         }
 
-        function clearAll() {
+        function clearAllAlarms() {
+            if (!confirm("Clear all alarms?")) return;
             alarms = [];
-            saveAlarms();
+            localStorage.setItem("studyAlarms", JSON.stringify(alarms));
             renderAlarms();
-            document.getElementById("alarmStatus").innerText = "";
         }
 
         function renderAlarms() {
-            const container = document.getElementById("alarmsContainer");
-            const listSection = document.getElementById("alarmList");
-
+            const container = document.getElementById("alarmsList");
             if (alarms.length === 0) {
-                listSection.style.display = "none";
+                container.innerHTML = '<div class="empty-alarms">No active alarms set.</div>';
                 return;
             }
 
-            listSection.style.display = "block";
             container.innerHTML = alarms.map((a, i) => `
-            <div class="alarm-item">
-                <span>🕐 <strong>${a.time}</strong>${a.label ? " — " + a.label : ""}${a.fired ? " ✅" : ""}</span>
-                <button class="remove-btn" onclick="removeAlarm(${i})" title="Remove">✕</button>
-            </div>
-        `).join("");
+                <div class="alarm-item">
+                    <div class="alarm-info">
+                        <h5>${a.time} ${a.fired ? '✅' : ''}</h5>
+                        <p>${a.label || 'Study Session'}</p>
+                    </div>
+                    <button class="btn-remove" onclick="removeAlarm(${i})">✕</button>
+                </div>
+            `).join("");
         }
 
+        fetchSettings();
         renderAlarms();
     </script>
-
 </body>
 
 </html>

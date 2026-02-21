@@ -4,144 +4,303 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Courses - StudyBuddy</title>
+    <title>My Subjects - StudyBuddy</title>
+    <link rel="stylesheet" href="css/style.css">
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
         }
 
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background: #4e73df;
-            color: white;
-            position: fixed;
-            padding-top: 20px;
+        /* Add subject form */
+        .add-form {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
         }
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
+        .add-form h3 {
+            color: var(--primary);
+            margin-bottom: 14px;
+            font-size: 15px;
         }
 
-        .sidebar a {
-            display: block;
-            padding: 12px 20px;
-            color: white;
-            text-decoration: none;
-        }
-
-        .sidebar a:hover {
-            background: #2e59d9;
-        }
-
-        .logout {
-            cursor: pointer;
-        }
-
-        .main {
-            margin-left: 220px;
-            padding: 24px;
-        }
-
-        h2 {
-            color: #4e73df;
-            margin-bottom: 20px;
-        }
-
-        .courses-grid {
+        .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+            gap: 10px;
+            align-items: end;
+        }
+
+        @media (max-width: 960px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-col label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 4px;
+        }
+
+        .form-col input,
+        .form-col select {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            transition: var(--transition);
+            background: #fafbff;
+        }
+
+        .form-col input:focus,
+        .form-col select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.12);
+        }
+
+        .btn-add {
+            padding: 9px 18px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(28, 200, 138, 0.3);
+        }
+
+        /* Subject cards */
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 20px;
         }
 
-        .course-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        .subject-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: var(--transition);
         }
 
-        .course-card h3 {
-            margin: 0 0 6px;
-            color: #222;
+        .subject-card:hover {
+            box-shadow: var(--shadow-md);
         }
 
-        .level-badge {
-            display: inline-block;
-            padding: 2px 10px;
+        .subject-card-header {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subject-card-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .subject-card-header .badges {
+            display: flex;
+            gap: 6px;
+        }
+
+        .subject-card-header .s-badge {
+            padding: 3px 8px;
             border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .subject-card-body {
+            padding: 16px 20px;
+        }
+
+        .subject-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 14px;
             font-size: 12px;
-            color: white;
-            margin-bottom: 10px;
+            color: var(--text-muted);
         }
 
-        .level-1 {
-            background: #28a745;
+        .subject-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .level-2 {
-            background: #ffc107;
-            color: #333;
-        }
-
-        .level-3 {
-            background: #dc3545;
-        }
-
-        .progress-bar-wrap {
-            background: #eee;
-            border-radius: 5px;
+        /* Progress bar */
+        .progress-bar {
             height: 8px;
-            margin: 10px 0;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 6px;
         }
 
-        .progress-bar-fill {
-            height: 8px;
-            background: #4e73df;
-            border-radius: 5px;
-            transition: width 0.4s;
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--accent), #36d399);
+            transition: width 0.5s ease;
         }
 
-        .progress-label {
-            font-size: 12px;
-            color: #666;
+        .progress-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
         }
 
-        .btn {
-            display: inline-block;
-            padding: 8px 16px;
-            background: #4e73df;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        /* Syllabus panel */
+        .syllabus-panel h4 {
+            font-size: 13px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .topic-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 0;
+            border-bottom: 1px solid #f0f2f5;
             font-size: 13px;
         }
 
-        .btn:hover {
-            background: #2e59d9;
+        .topic-item:last-child {
+            border-bottom: none;
         }
 
-        .btn-enrolled {
-            background: #6c757d;
+        .topic-item input[type="checkbox"] {
+            accent-color: var(--accent);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
         }
 
-        .btn-enrolled:hover {
-            background: #5a6268;
+        .topic-item.done .topic-name {
+            text-decoration: line-through;
+            color: #aaa;
         }
 
-        .btn-completed {
-            background: #28a745;
-            cursor: default;
+        .topic-name {
+            flex: 1;
         }
 
-        .empty {
-            color: #888;
+        .topic-del {
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .topic-del:hover {
+            color: var(--danger);
+        }
+
+        .add-topic-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .add-topic-row input {
+            flex: 1;
+            padding: 7px 10px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+        }
+
+        .add-topic-row input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .add-topic-row button {
+            padding: 7px 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Delete subject button */
+        .subject-card-footer {
+            padding: 10px 20px;
+            border-top: 1px solid var(--border);
+            text-align: right;
+        }
+
+        .btn-del-subject {
+            background: none;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-del-subject:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .empty-state {
             text-align: center;
-            padding: 40px;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
         }
     </style>
 </head>
@@ -155,7 +314,7 @@
         <a href="session.html">⏱ Study Session</a>
         <a href="alarm.html">⏰ Alarm</a>
         <a href="progress.html">📊 Progress</a>
-        <a href="courses.html" class="active">📚 Courses</a>
+        <a href="courses.html" class="active">📚 My Subjects</a>
         <a href="weak.html">⚠️ Weak Areas</a>
         <a href="gamification.html">🎮 Gamification</a>
         <a href="ai_study.html">🤖 AI Assistant</a>
@@ -164,9 +323,54 @@
     </div>
 
     <div class="main">
-        <h2>📚 Available Courses</h2>
-        <div class="courses-grid" id="coursesGrid">
-            <p class="empty">Loading courses...</p>
+        <div class="page-header">
+            <div>
+                <h2 style="color:var(--primary);margin:0">📚 My Subjects</h2>
+                <p style="color:var(--text-muted);font-size:13px;margin-top:2px">Manage subjects, track syllabus
+                    completion</p>
+            </div>
+        </div>
+
+        <!-- Add Subject Form -->
+        <div class="add-form animate-fade">
+            <h3>➕ Add New Subject</h3>
+            <div class="form-row">
+                <div class="form-col">
+                    <label>Subject Name</label>
+                    <input type="text" id="subName" placeholder="e.g. Physics">
+                </div>
+                <div class="form-col">
+                    <label>Difficulty</label>
+                    <select id="subDiff">
+                        <option value="Low">Low</option>
+                        <option value="Medium" selected>Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <div class="form-col">
+                    <label>Frequency</label>
+                    <input type="number" id="subFreq" min="1" max="10" value="1" placeholder="1">
+                </div>
+                <div class="form-col">
+                    <label>Exam Date</label>
+                    <input type="date" id="subExam">
+                </div>
+                <div class="form-col">
+                    <label>Study Goal</label>
+                    <input type="text" id="subGoal" placeholder="e.g. 2 hrs/day">
+                </div>
+                <div class="form-col" style="display:flex;align-items:flex-end">
+                    <button class="btn-add" onclick="addNewSubject()">+ Add</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subjects Grid -->
+        <div class="subjects-grid" id="subjectsGrid">
+            <div class="empty-state">
+                <div class="icon">📭</div>
+                <p>Loading subjects...</p>
+            </div>
         </div>
     </div>
 
@@ -174,61 +378,159 @@
     <script>
         requireAuth();
 
-        async function loadCourses() {
-            const courses = await getCourses();
-            const grid = document.getElementById("coursesGrid");
+        let allSubjects = [];
 
-            if (!Array.isArray(courses) || courses.length === 0) {
-                grid.innerHTML = '<p class="empty">No courses available yet.</p>';
+        // =====================================
+        // LOAD ALL SUBJECTS
+        // =====================================
+        async function loadSubjects() {
+            const data = await getSubjects();
+            if (!data || !Array.isArray(data)) {
+                allSubjects = [];
+            } else {
+                allSubjects = data;
+            }
+            renderSubjects();
+        }
+
+        // =====================================
+        // RENDER SUBJECT CARDS
+        // =====================================
+        function renderSubjects() {
+            const grid = document.getElementById("subjectsGrid");
+
+            if (!allSubjects.length) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column:1/-1">
+                        <div class="icon">📭</div>
+                        <p>No subjects yet. Add your first subject above!</p>
+                    </div>`;
                 return;
             }
 
-            grid.innerHTML = courses.map(c => {
-                const pct = c.total_units > 0
-                    ? Math.round((c.progress_units / c.total_units) * 100)
-                    : 0;
-
-                let btnHtml;
-                if (c.completed) {
-                    btnHtml = `<button class="btn btn-completed" disabled>✅ Completed</button>`;
-                } else if (c.enrolled) {
-                    btnHtml = `<button class="btn btn-enrolled" disabled>📖 Enrolled (${pct}%)</button>`;
-                } else {
-                    btnHtml = `<button class="btn" onclick="enroll(${c.id}, this)">Enroll</button>`;
-                }
-
-                const levelLabel = c.level === 1 ? "Beginner" : c.level === 2 ? "Intermediate" : "Advanced";
-
-                return `
-            <div class="course-card">
-                <h3>${c.title}</h3>
-                <span class="level-badge level-${c.level}">${levelLabel}</span>
-                <p style="font-size:13px; color:#555; margin:6px 0;">
-                    ${c.total_units} units · ${c.required_hours} hrs required
-                </p>
-                <div class="progress-bar-wrap">
-                    <div class="progress-bar-fill" style="width:${pct}%"></div>
+            grid.innerHTML = allSubjects.map(s => `
+                <div class="subject-card animate-fade" id="card-${s.id}">
+                    <div class="subject-card-header">
+                        <h3>${s.name}</h3>
+                        <div class="badges">
+                            <span class="s-badge">${s.difficulty || 'Medium'}</span>
+                            <span class="s-badge">×${s.frequency || 1}</span>
+                        </div>
+                    </div>
+                    <div class="subject-card-body">
+                        <div class="subject-meta">
+                            <span>📅 Exam: ${s.exam_date || 'Not set'}</span>
+                            <span>🎯 Goal: ${s.study_goal || 'None'}</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="pbar-${s.id}" style="width:0%"></div></div>
+                        <div class="progress-text" id="ptext-${s.id}">Loading syllabus...</div>
+                        <div class="syllabus-panel">
+                            <h4>📖 Syllabus Topics</h4>
+                            <ul class="topic-list" id="topics-${s.id}"></ul>
+                            <div class="add-topic-row">
+                                <input type="text" id="newTopic-${s.id}" placeholder="Add a topic...">
+                                <button onclick="addNewTopic(${s.id})">+ Add</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="subject-card-footer">
+                        <button class="btn-del-subject" onclick="deleteSubj(${s.id}, '${s.name}')">🗑 Delete Subject</button>
+                    </div>
                 </div>
-                <p class="progress-label">${c.progress_units} / ${c.total_units} units</p>
-                ${btnHtml}
-            </div>`;
-            }).join("");
+            `).join("");
+
+            // Load syllabus for each subject
+            allSubjects.forEach(s => loadSyllabus(s.id));
         }
 
-        async function enroll(courseId, btn) {
-            btn.disabled = true;
-            btn.innerText = "Enrolling...";
-            const res = await enrollCourse(courseId);
+        // =====================================
+        // LOAD SYLLABUS FOR A SUBJECT
+        // =====================================
+        async function loadSyllabus(subjectId) {
+            const data = await getSyllabus(subjectId);
+            if (!data) return;
+
+            const list = document.getElementById("topics-" + subjectId);
+            const pbar = document.getElementById("pbar-" + subjectId);
+            const ptext = document.getElementById("ptext-" + subjectId);
+
+            if (!data.topics || !data.topics.length) {
+                list.innerHTML = '<li class="topic-item" style="color:var(--text-muted);font-style:italic">No topics yet</li>';
+                pbar.style.width = "0%";
+                ptext.innerText = "0 / 0 topics completed (0%)";
+                return;
+            }
+
+            list.innerHTML = data.topics.map(t => `
+                <li class="topic-item ${t.completed ? 'done' : ''}">
+                    <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleT(${t.id}, ${subjectId})">
+                    <span class="topic-name">${t.topic_name}</span>
+                    <button class="topic-del" onclick="deleteT(${t.id}, ${subjectId})">✕</button>
+                </li>
+            `).join("");
+
+            pbar.style.width = data.percent + "%";
+            ptext.innerText = `${data.completed} / ${data.total} topics completed (${data.percent}%)`;
+        }
+
+        // =====================================
+        // ADD SUBJECT
+        // =====================================
+        async function addNewSubject() {
+            const name = document.getElementById("subName").value.trim();
+            if (!name) { alert("Please enter a subject name."); return; }
+
+            const res = await addSubject({
+                name,
+                difficulty: document.getElementById("subDiff").value,
+                frequency: parseInt(document.getElementById("subFreq").value) || 1,
+                exam_date: document.getElementById("subExam").value || null,
+                study_goal: document.getElementById("subGoal").value.trim() || null
+            });
+
             if (res._ok) {
-                btn.innerText = "📖 Enrolled";
-                btn.className = "btn btn-enrolled";
+                document.getElementById("subName").value = "";
+                document.getElementById("subGoal").value = "";
+                loadSubjects();
             } else {
-                btn.innerText = res.message || "Error";
-                btn.disabled = false;
+                alert(res.message || "Failed to add subject.");
             }
         }
 
-        loadCourses();
+        // =====================================
+        // DELETE SUBJECT
+        // =====================================
+        async function deleteSubj(id, name) {
+            if (!confirm(`Delete "${name}" and all its topics?`)) return;
+            const ok = await deleteSubject(id);
+            if (ok || ok._ok !== false) {
+                loadSubjects();
+            }
+        }
+
+        // =====================================
+        // ADD / TOGGLE / DELETE TOPIC
+        // =====================================
+        async function addNewTopic(subjectId) {
+            const input = document.getElementById("newTopic-" + subjectId);
+            const name = input.value.trim();
+            if (!name) return;
+            await addTopic(subjectId, name);
+            input.value = "";
+            loadSyllabus(subjectId);
+        }
+
+        async function toggleT(topicId, subjectId) {
+            await toggleTopic(topicId);
+            loadSyllabus(subjectId);
+        }
+
+        async function deleteT(topicId, subjectId) {
+            await deleteTopic(topicId);
+            loadSyllabus(subjectId);
+        }
+
+        loadSubjects();
     </script>
 
 </body>

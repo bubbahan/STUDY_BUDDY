@@ -124,3 +124,72 @@ Keep it friendly, specific, and under 300 words. Use markdown formatting."""
             {"role": "user", "content": prompt}
         ]
         return AIService._call(messages, temperature=0.75, api_key_override=api_key_override)
+
+    # ------------------------------------------------------------------
+    # AI QUIZ GENERATOR
+    # ------------------------------------------------------------------
+    @staticmethod
+    def generate_quiz(
+        subject: str,
+        topic: str = "",
+        difficulty: str = "Medium",
+        num_questions: int = 5,
+        api_key_override: str = None
+    ) -> str:
+        topic_info = f" focusing on the topic: {topic}" if topic else ""
+        prompt = f"""You are an expert academic quiz creator.
+
+Create exactly {num_questions} multiple-choice questions for the subject **{subject}**{topic_info}.
+Difficulty level: {difficulty}
+
+For EACH question, use this exact format:
+
+### Q1. [Question text]
+- A) [Option A]
+- B) [Option B]
+- C) [Option C]
+- D) [Option D]
+
+**Answer: [Letter]) [Correct answer text]**
+**Explanation:** [Brief 1-sentence explanation]
+
+---
+
+Make the questions educational, clear, and progressively harder. Use markdown formatting."""
+
+        messages = [
+            {"role": "system", "content": "You are an academic quiz creator. Always use clean markdown formatting with ### for questions."},
+            {"role": "user", "content": prompt}
+        ]
+        return AIService._call(messages, temperature=0.7, api_key_override=api_key_override)
+
+    # ------------------------------------------------------------------
+    # AI TOPIC EXPLAINER
+    # ------------------------------------------------------------------
+    @staticmethod
+    def explain_topic(
+        subject: str,
+        topic: str,
+        depth: str = "detailed",
+        api_key_override: str = None
+    ) -> str:
+        prompt = f"""You are a brilliant and patient tutor explaining a concept to a student.
+
+**Subject:** {subject}
+**Topic:** {topic}
+**Depth:** {depth}
+
+Please provide:
+1. **Simple Definition** — Explain in 1-2 simple sentences what this topic is.
+2. **Detailed Explanation** — A clear, structured breakdown (use bullet points).
+3. **Real-World Example** — One practical example that makes it click.
+4. **Common Mistakes** — 2 mistakes students often make with this topic.
+5. **Quick Memory Tip** — A mnemonic or trick to remember the key idea.
+
+Keep it friendly, clear, and under 400 words. Use markdown formatting."""
+
+        messages = [
+            {"role": "system", "content": "You are a patient, brilliant tutor. Use markdown."},
+            {"role": "user", "content": prompt}
+        ]
+        return AIService._call(messages, temperature=0.65, api_key_override=api_key_override)

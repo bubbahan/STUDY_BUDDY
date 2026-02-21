@@ -20,28 +20,55 @@ class User(db.Model):
 
     exam_date = db.Column(db.Date)
 
+    # New fields
+    profile_photo = db.Column(db.String(300))   # path to uploaded photo
+    alarm_sound = db.Column(db.String(100), default="default")  # selected alarm sound
+
     level = db.Column(db.Integer, default=1)
     xp = db.Column(db.Integer, default=0)
     streak = db.Column(db.Integer, default=0)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    subjects = db.relationship("Subject", backref="user", lazy=True)
+    subjects = db.relationship("Subject", backref="user", lazy=True, cascade="all, delete-orphan")
     sessions = db.relationship("StudySession", backref="user", lazy=True)
     enrollments = db.relationship("Enrollment", backref="user", lazy=True)
 
 
 # =========================
-# SUBJECT MODEL
+# SUBJECT MODEL (enhanced)
 # =========================
 class Subject(db.Model):
     __tablename__ = "subjects"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    units = db.Column(db.Integer)
+    units = db.Column(db.Integer, default=1)
+
+    # New fields
+    difficulty = db.Column(db.String(20), default="Medium")   # High / Medium / Low
+    frequency = db.Column(db.Integer, default=1)               # how often to study (weight)
+    exam_date = db.Column(db.Date)                             # per-subject exam date
+    study_goal = db.Column(db.String(200))                     # optional goal text
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+
+    # Cascade delete syllabus topics when subject is deleted
+    topics = db.relationship("Syllabus", backref="subject", lazy=True, cascade="all, delete-orphan")
+
+
+# =========================
+# SYLLABUS MODEL (new)
+# =========================
+class Syllabus(db.Model):
+    __tablename__ = "syllabus"
+
+    id = db.Column(db.Integer, primary_key=True)
+    topic_name = db.Column(db.String(200), nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    subject_id = db.Column(db.Integer, db.ForeignKey("subjects.id"), nullable=False)
 
 
 # =========================
@@ -54,6 +81,7 @@ class Timetable(db.Model):
     date = db.Column(db.Date)
     subject = db.Column(db.String(100))
     planned_hours = db.Column(db.Float)
+    completed = db.Column(db.Boolean, default=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
@@ -92,14 +120,14 @@ class WeakArea(db.Model):
 
 
 # =========================
-# COURSE MODEL
+# COURSE MODEL (legacy)
 # =========================
 class Course(db.Model):
     __tablename__ = "courses"
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150))
-    level = db.Column(db.Integer)  # 1 = Beginner, 2 = Intermediate
+    level = db.Column(db.Integer)
     total_units = db.Column(db.Integer)
     required_hours = db.Column(db.Integer)
 
@@ -107,7 +135,7 @@ class Course(db.Model):
 
 
 # =========================
-# ENROLLMENT MODEL
+# ENROLLMENT MODEL (legacy)
 # =========================
 class Enrollment(db.Model):
     __tablename__ = "enrollments"

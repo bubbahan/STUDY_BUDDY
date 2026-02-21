@@ -9,25 +9,6 @@ from database import db
 import models
 
 
-def seed_courses(app):
-    """Seed initial course data if none exists."""
-    with app.app_context():
-        from models import Course
-        if Course.query.count() == 0:
-            courses = [
-                Course(title="Python Basics", level=1, total_units=10, required_hours=5),
-                Course(title="Data Structures", level=2, total_units=12, required_hours=8),
-                Course(title="Algorithms", level=2, total_units=15, required_hours=10),
-                Course(title="Web Development", level=1, total_units=8, required_hours=6),
-                Course(title="Machine Learning Intro", level=3, total_units=20, required_hours=15),
-                Course(title="Database Design", level=2, total_units=10, required_hours=7),
-            ]
-            for course in courses:
-                db.session.add(course)
-            db.session.commit()
-            print("[StudyBuddy] Seeded 6 courses into the database.")
-
-
 def create_app():
     app = Flask(__name__, static_folder=None)
     app.config.from_object(Config)
@@ -35,6 +16,11 @@ def create_app():
     # Use dedicated JWT secret key (avoids the HMAC short-key warning)
     app.config["JWT_SECRET_KEY"] = Config.JWT_SECRET_KEY
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = Config.JWT_ACCESS_TOKEN_EXPIRES
+
+    # Upload folder for profile photos
+    upload_dir = os.path.join(os.path.dirname(__file__), "uploads")
+    os.makedirs(upload_dir, exist_ok=True)
+    app.config["UPLOAD_FOLDER"] = upload_dir
 
     # Extensions
     CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -49,6 +35,8 @@ def create_app():
     from routes.course_routes import course_bp
     from routes.session_routes import session_bp
     from routes.ai_routes import ai_bp
+    from routes.subject_routes import subject_bp
+    from routes.syllabus_routes import syllabus_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(user_bp, url_prefix="/api/user")
@@ -57,6 +45,8 @@ def create_app():
     app.register_blueprint(course_bp, url_prefix="/api/courses")
     app.register_blueprint(session_bp, url_prefix="/api/session")
     app.register_blueprint(ai_bp, url_prefix="/api/ai")
+    app.register_blueprint(subject_bp, url_prefix="/api/subjects")
+    app.register_blueprint(syllabus_bp, url_prefix="/api/syllabus")
 
     # ------ Serve Frontend Static Files ------
     frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
@@ -65,14 +55,17 @@ def create_app():
     def serve_index():
         return send_from_directory(frontend_dir, "index.html")
 
+    # Serve uploaded files
+    @app.route("/uploads/<path:filename>")
+    def serve_upload(filename):
+        return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
     @app.route("/<path:path>")
     def serve_frontend(path):
         return send_from_directory(frontend_dir, path)
 
     with app.app_context():
         db.create_all()
-
-    seed_courses(app)
 
     return app
 

@@ -104,3 +104,73 @@ def ai_tips():
         return jsonify({"result": result})
     except RuntimeError as e:
         return jsonify({"message": str(e)}), 503
+
+
+# =============================
+# AI QUIZ GENERATOR
+# =============================
+@ai_bp.route("/quiz", methods=["POST"])
+@jwt_required()
+def ai_quiz():
+    """Generate practice quiz questions for a subject."""
+    user_id = int(get_jwt_identity())
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    data = request.get_json(silent=True) or {}
+    subject = data.get("subject", "").strip()
+    if not subject:
+        return jsonify({"message": "Please specify a subject."}), 400
+
+    topic = data.get("topic", "").strip()
+    difficulty = data.get("difficulty", "Medium")
+    num_questions = min(int(data.get("num_questions", 5)), 10)
+
+    user_api_key = request.headers.get("X-OpenRouter-Key", "").strip()
+
+    try:
+        result = AIService.generate_quiz(
+            subject=subject,
+            topic=topic,
+            difficulty=difficulty,
+            num_questions=num_questions,
+            api_key_override=user_api_key or None
+        )
+        return jsonify({"result": result})
+    except RuntimeError as e:
+        return jsonify({"message": str(e)}), 503
+
+
+# =============================
+# AI TOPIC EXPLAINER
+# =============================
+@ai_bp.route("/explain", methods=["POST"])
+@jwt_required()
+def ai_explain():
+    """Get a detailed AI explanation of a topic."""
+    user_id = int(get_jwt_identity())
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    data = request.get_json(silent=True) or {}
+    subject = data.get("subject", "").strip()
+    topic = data.get("topic", "").strip()
+
+    if not subject or not topic:
+        return jsonify({"message": "Please specify both a subject and a topic."}), 400
+
+    depth = data.get("depth", "detailed")
+    user_api_key = request.headers.get("X-OpenRouter-Key", "").strip()
+
+    try:
+        result = AIService.explain_topic(
+            subject=subject,
+            topic=topic,
+            depth=depth,
+            api_key_override=user_api_key or None
+        )
+        return jsonify({"result": result})
+    except RuntimeError as e:
+        return jsonify({"message": str(e)}), 503

@@ -5,205 +5,327 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings - StudyBuddy</title>
+    <link rel="stylesheet" href="css/style.css">
     <style>
-        * {
-            box-sizing: border-box;
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            max-width: 900px;
         }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
+        @media (max-width: 860px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
-        /* ---- Sidebar ---- */
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background: #4e73df;
+        .settings-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .settings-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .settings-card-header {
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             color: white;
-            position: fixed;
-            padding-top: 20px;
-            overflow-y: auto;
+            font-weight: 700;
+            font-size: 15px;
         }
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 18px;
+        .settings-card-header.blue {
+            background: linear-gradient(135deg, #4e73df, #3b55c4);
         }
 
-        .sidebar a {
-            display: block;
-            padding: 12px 20px;
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
+        .settings-card-header.green {
+            background: linear-gradient(135deg, #1cc88a, #17a673);
         }
 
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: #2e59d9;
+        .settings-card-header.red {
+            background: linear-gradient(135deg, #e74a3b, #c0392b);
         }
 
-        .sidebar .logout {
-            cursor: pointer;
+        .settings-card-header.purple {
+            background: linear-gradient(135deg, #6f42c1, #5a32a3);
         }
 
-        /* ---- Main ---- */
-        .main {
-            margin-left: 220px;
+        .settings-card-header.orange {
+            background: linear-gradient(135deg, #fd7e14, #e06b10);
+        }
+
+        .settings-card-header .icon {
+            font-size: 22px;
+        }
+
+        .settings-card-body {
             padding: 24px;
         }
 
-        h2 {
-            color: #4e73df;
-            margin-bottom: 20px;
-        }
-
-        /* ---- Settings Card ---- */
-        .settings-card {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            max-width: 560px;
-        }
-
-        .settings-card h3 {
-            margin: 0 0 20px;
-            color: #4e73df;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #444;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
-
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #4e73df;
-        }
-
-        input:disabled {
-            background: #f9f9f9;
-            color: #999;
-        }
-
-        .row-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .btn-save {
-            padding: 11px 28px;
-            background: #4e73df;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 15px;
-            margin-top: 8px;
-        }
-
-        .btn-save:hover {
-            background: #2e59d9;
-        }
-
-        .btn-save:disabled {
-            background: #aaa;
-            cursor: default;
-        }
-
-        #msg {
-            margin-top: 12px;
-            font-size: 14px;
-            min-height: 18px;
-        }
-
-        /* ---- Section divider ---- */
-        .divider {
-            border: none;
-            border-top: 1px solid #eee;
-            margin: 28px 0;
-        }
-
-        .password-section h3 {
-            color: #e74c3c;
-        }
-
-        .btn-pwd {
-            padding: 10px 22px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 8px;
-        }
-
-        .btn-pwd:hover {
-            background: #c0392b;
-        }
-
-        #pwdMsg {
-            margin-top: 10px;
-            font-size: 14px;
-            min-height: 18px;
-        }
-
-        /* ---- Profile Avatar ---- */
+        /* Profile header */
         .profile-header {
             display: flex;
             align-items: center;
             gap: 18px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: linear-gradient(135deg, #f0f4ff, #e8edff);
+            border-radius: var(--radius-sm);
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            flex-shrink: 0;
         }
 
         .avatar {
-            width: 64px;
-            height: 64px;
-            background: #4e73df;
+            width: 68px;
+            height: 68px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 26px;
+            font-weight: 700;
+            box-shadow: 0 4px 14px rgba(78, 115, 223, 0.3);
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-upload-label {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 26px;
+            height: 26px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .avatar-upload-label:hover {
+            transform: scale(1.1);
         }
 
         .profile-meta h3 {
             margin: 0;
             font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
         }
 
         .profile-meta p {
-            margin: 4px 0 0;
-            color: #777;
+            margin: 2px 0 0;
+            color: var(--text-muted);
             font-size: 13px;
+        }
+
+        /* Form */
+        .s-form-group {
+            margin-bottom: 16px;
+        }
+
+        .s-form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .s-form-group input,
+        .s-form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: var(--text);
+            transition: var(--transition);
+            background: #fafbff;
+        }
+
+        .s-form-group input:focus,
+        .s-form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.12);
+            background: white;
+        }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            margin-top: 8px;
+        }
+
+        .btn-save:active {
+            transform: scale(0.98);
+        }
+
+        .btn-save:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        .btn-save.blue {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 14px rgba(78, 115, 223, 0.3);
+        }
+
+        .btn-save.red {
+            background: linear-gradient(135deg, #e74a3b, #c0392b);
+            color: white;
+            box-shadow: 0 4px 14px rgba(231, 74, 59, 0.3);
+        }
+
+        .btn-save:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .msg {
+            margin-top: 10px;
+            font-size: 13px;
+            min-height: 18px;
+            text-align: center;
+        }
+
+        .msg.success {
+            color: var(--accent);
+        }
+
+        .msg.error {
+            color: var(--danger);
+        }
+
+        .msg.info {
+            color: var(--text-muted);
+        }
+
+        /* Account stats */
+        .account-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .mini-stat {
+            text-align: center;
+            padding: 12px 8px;
+            background: #f8f9ff;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .mini-stat .value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+
+        .mini-stat .label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* Alarm sound list */
+        .sound-options {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sound-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 13px;
+        }
+
+        .sound-option:hover {
+            border-color: var(--primary);
+            background: #f8f9ff;
+        }
+
+        .sound-option.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            font-weight: 600;
+        }
+
+        .sound-option input[type="radio"] {
+            accent-color: var(--primary);
+        }
+
+        /* Password strength */
+        .pwd-strength {
+            height: 4px;
+            border-radius: 2px;
+            background: #eee;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+
+        .pwd-strength-bar {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s, background 0.3s;
+            width: 0;
         }
     </style>
 </head>
@@ -215,8 +337,9 @@
         <a href="dashboard.html">🏠 Dashboard</a>
         <a href="timetable.html">📅 Timetable</a>
         <a href="session.html">⏱ Study Session</a>
+        <a href="alarm.html">⏰ Alarm</a>
         <a href="progress.html">📊 Progress</a>
-        <a href="courses.html">📚 Courses</a>
+        <a href="courses.html">📚 My Subjects</a>
         <a href="weak.html">⚠️ Weak Areas</a>
         <a href="gamification.html">🎮 Gamification</a>
         <a href="ai_study.html">🤖 AI Assistant</a>
@@ -225,80 +348,149 @@
     </div>
 
     <div class="main">
-        <h2>⚙️ Settings</h2>
+        <h2 style="color:var(--primary);margin-bottom:4px">⚙️ Settings</h2>
+        <p style="color:var(--text-muted);margin-bottom:24px;font-size:14px">Manage your profile, preferences, alarm
+            sound & security</p>
 
-        <!-- Profile Section -->
-        <div class="settings-card" id="profileCard">
-            <div class="profile-header">
-                <div class="avatar" id="avatarInitial">?</div>
-                <div class="profile-meta">
-                    <h3 id="profileName">Loading...</h3>
-                    <p id="profileEmail">—</p>
+        <div class="settings-grid">
+
+            <!-- ========== Profile & Preferences ========== -->
+            <div class="settings-card animate-fade">
+                <div class="settings-card-header blue">
+                    <span class="icon">👤</span> Profile & Preferences
+                </div>
+                <div class="settings-card-body">
+
+                    <div class="profile-header">
+                        <div class="avatar-wrapper">
+                            <div class="avatar" id="avatarEl">?</div>
+                            <label class="avatar-upload-label" for="photoInput">📷</label>
+                            <input type="file" id="photoInput" accept="image/*" style="display:none"
+                                onchange="uploadProfilePhoto()">
+                        </div>
+                        <div class="profile-meta">
+                            <h3 id="profileName">Loading...</h3>
+                            <p id="profileEmail">—</p>
+                            <span class="badge badge-primary" id="profileLevel">Level 1</span>
+                        </div>
+                    </div>
+
+                    <div class="s-form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="settingName" placeholder="Your name">
+                    </div>
+
+                    <div class="s-form-group">
+                        <label>Email (editable)</label>
+                        <input type="email" id="settingEmail" placeholder="your@email.com">
+                    </div>
+
+                    <div class="row-2">
+                        <div class="s-form-group">
+                            <label>Study Hours / Day</label>
+                            <input type="number" id="settingHours" min="1" max="16" placeholder="4">
+                        </div>
+                        <div class="s-form-group">
+                            <label>Study Preference</label>
+                            <select id="settingPreference">
+                                <option value="morning">🌅 Morning</option>
+                                <option value="night">🌙 Night</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row-2">
+                        <div class="s-form-group">
+                            <label>Sleep Time</label>
+                            <input type="time" id="settingSleep">
+                        </div>
+                        <div class="s-form-group">
+                            <label>Wake Up Time</label>
+                            <input type="time" id="settingWake">
+                        </div>
+                    </div>
+
+                    <div class="s-form-group">
+                        <label>Exam Date</label>
+                        <input type="date" id="settingExam">
+                    </div>
+
+                    <div class="msg" id="msg"></div>
+                    <button class="btn-save blue" id="saveBtn" onclick="saveSettings()">💾 Save Changes</button>
                 </div>
             </div>
-            <h3>Study Preferences</h3>
 
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" id="settingName" placeholder="Your name">
-            </div>
+            <!-- ========== Right Column ========== -->
+            <div>
 
-            <div class="form-group">
-                <label>Email (read-only)</label>
-                <input type="email" id="settingEmail" disabled>
-            </div>
-
-            <div class="row-2">
-                <div class="form-group">
-                    <label>Study Hours / Day</label>
-                    <input type="number" id="settingHours" min="1" max="16" placeholder="e.g. 4">
+                <!-- Account Overview -->
+                <div class="settings-card animate-fade" style="margin-bottom:24px">
+                    <div class="settings-card-header green">
+                        <span class="icon">📊</span> Account Overview
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="account-stats">
+                            <div class="mini-stat"><span class="value" id="statLevel">1</span><span
+                                    class="label">Level</span></div>
+                            <div class="mini-stat"><span class="value" id="statXP">0</span><span class="label">XP</span>
+                            </div>
+                            <div class="mini-stat"><span class="value" id="statStreak">0</span><span
+                                    class="label">Streak</span></div>
+                        </div>
+                        <p style="text-align:center;color:var(--text-muted);font-size:12px;margin-top:14px">Keep
+                            studying daily to build your streak! 🔥</p>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Study Preference</label>
-                    <select id="settingPreference">
-                        <option value="morning">Morning</option>
-                        <option value="night">Night</option>
-                    </select>
+
+                <!-- Alarm Sound -->
+                <div class="settings-card animate-fade" style="margin-bottom:24px">
+                    <div class="settings-card-header orange">
+                        <span class="icon">🔔</span> Alarm Sound
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="sound-options" id="soundOptions">
+                            <label class="sound-option" onclick="selectSound('default')">
+                                <input type="radio" name="alarm" value="default"> 🔔 Default Bell
+                            </label>
+                            <label class="sound-option" onclick="selectSound('chime')">
+                                <input type="radio" name="alarm" value="chime"> 🎵 Gentle Chime
+                            </label>
+                            <label class="sound-option" onclick="selectSound('alarm')">
+                                <input type="radio" name="alarm" value="alarm"> ⏰ Classic Alarm
+                            </label>
+                            <label class="sound-option" onclick="selectSound('digital')">
+                                <input type="radio" name="alarm" value="digital"> 📱 Digital Beep
+                            </label>
+                            <label class="sound-option" onclick="selectSound('nature')">
+                                <input type="radio" name="alarm" value="nature"> 🌿 Nature Sounds
+                            </label>
+                        </div>
+                        <div class="msg" id="soundMsg"></div>
+                    </div>
+                </div>
+
+                <!-- Change Password -->
+                <div class="settings-card animate-fade">
+                    <div class="settings-card-header red">
+                        <span class="icon">🔒</span> Change Password
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="s-form-group">
+                            <label>New Password</label>
+                            <input type="password" id="newPwd" placeholder="Min 6 characters" oninput="checkStrength()">
+                            <div class="pwd-strength">
+                                <div class="pwd-strength-bar" id="pwdBar"></div>
+                            </div>
+                        </div>
+                        <div class="s-form-group">
+                            <label>Confirm Password</label>
+                            <input type="password" id="confirmPwd" placeholder="Confirm password">
+                        </div>
+                        <div class="msg" id="pwdMsg"></div>
+                        <button class="btn-save red" onclick="changePassword()">🔒 Update Password</button>
+                    </div>
                 </div>
             </div>
-
-            <div class="row-2">
-                <div class="form-group">
-                    <label>Sleep Time</label>
-                    <input type="time" id="settingSleep">
-                </div>
-                <div class="form-group">
-                    <label>Wake Up Time</label>
-                    <input type="time" id="settingWake">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Exam Date</label>
-                <input type="date" id="settingExam">
-            </div>
-
-            <div id="msg"></div>
-            <button class="btn-save" id="saveBtn" onclick="saveSettings()">💾 Save Changes</button>
-        </div>
-
-        <hr class="divider">
-
-        <!-- Password Section -->
-        <div class="settings-card password-section" style="margin-top:0;">
-            <h3>🔒 Change Password</h3>
-
-            <div class="form-group">
-                <label>New Password</label>
-                <input type="password" id="newPwd" placeholder="Enter new password">
-            </div>
-            <div class="form-group">
-                <label>Confirm Password</label>
-                <input type="password" id="confirmPwd" placeholder="Confirm new password">
-            </div>
-
-            <div id="pwdMsg"></div>
-            <button class="btn-pwd" onclick="changePassword()">🔒 Update Password</button>
         </div>
     </div>
 
@@ -306,31 +498,58 @@
     <script>
         requireAuth();
 
-        // Load profile from backend
         async function loadProfile() {
-            const data = await apiRequest("/api/user/profile", "GET", null, true);
-            if (!data._ok) return;
+            const data = await getProfile();
+            if (!data || !data._ok) return;
 
             document.getElementById("profileName").innerText = data.name || "User";
             document.getElementById("profileEmail").innerText = data.email || "";
-            document.getElementById("avatarInitial").innerText = (data.name || "U")[0].toUpperCase();
+            document.getElementById("profileLevel").innerText = "Level " + (data.level || 1);
 
+            // Avatar
+            const avatar = document.getElementById("avatarEl");
+            if (data.profile_photo) {
+                avatar.innerHTML = `<img src="${BASE_URL}${data.profile_photo}" alt="Photo">`;
+            } else {
+                avatar.innerText = (data.name || "U")[0].toUpperCase();
+            }
+
+            // Form fields
             document.getElementById("settingName").value = data.name || "";
             document.getElementById("settingEmail").value = data.email || "";
             document.getElementById("settingHours").value = data.study_hours_per_day || 4;
             document.getElementById("settingPreference").value = data.preference || "morning";
             document.getElementById("settingSleep").value = data.sleep_time || "23:00";
             document.getElementById("settingWake").value = data.wake_time || "07:00";
-            if (data.exam_date) {
-                document.getElementById("settingExam").value = data.exam_date;
+            if (data.exam_date) document.getElementById("settingExam").value = data.exam_date;
+
+            // Stats
+            document.getElementById("statLevel").innerText = data.level || 1;
+            document.getElementById("statXP").innerText = data.xp || 0;
+            document.getElementById("statStreak").innerText = data.streak || 0;
+
+            // Alarm sound
+            setActiveSound(data.alarm_sound || "default");
+        }
+
+        // Profile photo upload
+        async function uploadProfilePhoto() {
+            const file = document.getElementById("photoInput").files[0];
+            if (!file) return;
+            const fd = new FormData();
+            fd.append("photo", file);
+            const res = await uploadPhoto(fd);
+            if (res && res._ok) {
+                loadProfile();
+            } else {
+                alert(res.message || "Upload failed.");
             }
         }
 
-        // Save settings — re-registers the update via auth register fields
-        // Since there's no dedicated update endpoint, we show the changes locally
-        // and store study preferences in localStorage for now.
+        // Save settings
         async function saveSettings() {
             const name = document.getElementById("settingName").value.trim();
+            const email = document.getElementById("settingEmail").value.trim();
             const hours = document.getElementById("settingHours").value;
             const preference = document.getElementById("settingPreference").value;
             const sleep = document.getElementById("settingSleep").value;
@@ -339,65 +558,86 @@
             const msgEl = document.getElementById("msg");
             const btn = document.getElementById("saveBtn");
 
-            if (!name) {
-                msgEl.style.color = "red";
-                msgEl.innerText = "Name cannot be empty.";
-                return;
-            }
+            if (!name) { msgEl.className = "msg error"; msgEl.innerText = "Name cannot be empty."; return; }
 
             btn.disabled = true;
-            msgEl.style.color = "#333";
-            msgEl.innerText = "Saving...";
+            msgEl.className = "msg info"; msgEl.innerText = "Saving...";
 
-            // Hit the update profile endpoint (we'll add it if missing)
             const res = await apiRequest("/api/user/update", "PUT", {
-                name,
+                name, email,
                 study_hours_per_day: parseInt(hours),
-                preference,
-                sleep_time: sleep,
-                wake_time: wake,
+                preference, sleep_time: sleep, wake_time: wake,
                 exam_date: exam || null
             }, true);
 
             if (res._ok) {
                 localStorage.setItem("name", name);
                 document.getElementById("profileName").innerText = name;
-                document.getElementById("avatarInitial").innerText = name[0].toUpperCase();
-                msgEl.style.color = "#28a745";
-                msgEl.innerText = "✅ Settings saved!";
+                document.getElementById("profileEmail").innerText = email;
+                msgEl.className = "msg success"; msgEl.innerText = "✅ Settings saved!";
             } else {
-                msgEl.style.color = "red";
-                msgEl.innerText = "❌ " + (res.message || "Failed to save.");
+                msgEl.className = "msg error"; msgEl.innerText = "❌ " + (res.message || "Failed.");
             }
             btn.disabled = false;
         }
 
+        // Alarm sound
+        function setActiveSound(value) {
+            document.querySelectorAll(".sound-option").forEach(opt => {
+                const radio = opt.querySelector("input[type=radio]");
+                if (radio.value === value) {
+                    opt.classList.add("active");
+                    radio.checked = true;
+                } else {
+                    opt.classList.remove("active");
+                    radio.checked = false;
+                }
+            });
+        }
+
+        async function selectSound(value) {
+            setActiveSound(value);
+            const ok = await saveAlarmSound(value);
+            const msg = document.getElementById("soundMsg");
+            if (ok) {
+                msg.className = "msg success"; msg.innerText = "✅ Sound saved!";
+            } else {
+                msg.className = "msg error"; msg.innerText = "❌ Failed to save.";
+            }
+            setTimeout(() => { msg.innerText = ""; }, 2000);
+        }
+
+        // Change password
         async function changePassword() {
             const newPwd = document.getElementById("newPwd").value;
             const confirm = document.getElementById("confirmPwd").value;
             const msg = document.getElementById("pwdMsg");
 
-            if (!newPwd || newPwd.length < 6) {
-                msg.style.color = "red";
-                msg.innerText = "Password must be at least 6 characters.";
-                return;
-            }
-            if (newPwd !== confirm) {
-                msg.style.color = "red";
-                msg.innerText = "Passwords do not match.";
-                return;
-            }
+            if (!newPwd || newPwd.length < 6) { msg.className = "msg error"; msg.innerText = "Password must be at least 6 characters."; return; }
+            if (newPwd !== confirm) { msg.className = "msg error"; msg.innerText = "Passwords do not match."; return; }
 
             const res = await apiRequest("/api/user/change-password", "POST", { password: newPwd }, true);
             if (res._ok) {
-                msg.style.color = "#28a745";
-                msg.innerText = "✅ Password updated!";
+                msg.className = "msg success"; msg.innerText = "✅ Password updated!";
                 document.getElementById("newPwd").value = "";
                 document.getElementById("confirmPwd").value = "";
+                document.getElementById("pwdBar").style.width = "0";
             } else {
-                msg.style.color = "red";
-                msg.innerText = "❌ " + (res.message || "Failed.");
+                msg.className = "msg error"; msg.innerText = "❌ " + (res.message || "Failed.");
             }
+        }
+
+        function checkStrength() {
+            const pwd = document.getElementById("newPwd").value;
+            const bar = document.getElementById("pwdBar");
+            let score = 0;
+            if (pwd.length >= 6) score++;
+            if (pwd.length >= 10) score++;
+            if (/[A-Z]/.test(pwd)) score++;
+            if (/[0-9]/.test(pwd)) score++;
+            if (/[^A-Za-z0-9]/.test(pwd)) score++;
+            bar.style.width = (score / 5 * 100) + "%";
+            bar.style.background = score <= 1 ? "#e74a3b" : score <= 3 ? "#f6c23e" : "#1cc88a";
         }
 
         loadProfile();

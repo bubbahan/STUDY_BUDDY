@@ -5,198 +5,248 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Study Assistant - StudyBuddy</title>
+    <link rel="stylesheet" href="css/style.css">
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
-        }
-
-        /* ---- Sidebar ---- */
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background: #4e73df;
-            color: white;
-            position: fixed;
-            padding-top: 20px;
-            overflow-y: auto;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 18px;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 12px 20px;
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: #2e59d9;
-        }
-
-        .logout {
-            cursor: pointer;
-        }
-
-        /* ---- Main ---- */
-        .main {
-            margin-left: 220px;
-            padding: 24px;
-        }
-
-        h2 {
-            color: #4e73df;
-            margin-bottom: 6px;
-        }
-
-        .subtitle {
-            color: #777;
-            margin-bottom: 24px;
-            font-size: 14px;
-        }
-
-
-
-        /* ---- Grid ---- */
-        .ai-grid {
+        /* ---- Page Grid ---- */
+        .page-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 22px;
+            gap: 20px;
+            align-items: start;
         }
 
-        @media (max-width: 900px) {
-            .ai-grid {
+        @media (max-width: 960px) {
+            .page-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* ---- Panel ---- */
-        .ai-panel {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+        /* ---- AI Cards ---- */
+        .ai-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
             overflow: hidden;
+            transition: var(--transition);
         }
 
-        .panel-header {
-            background: linear-gradient(135deg, #4e73df, #2e59d9);
-            color: white;
-            padding: 18px 20px;
+        .ai-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .ai-card-header {
+            padding: 16px 20px;
             display: flex;
             align-items: center;
             gap: 12px;
+            color: white;
         }
 
-        .panel-header .icon {
-            font-size: 28px;
+        .ai-card-header.blue {
+            background: linear-gradient(135deg, #4e73df, #3b55c4);
         }
 
-        .panel-header h3 {
+        .ai-card-header.green {
+            background: linear-gradient(135deg, #1cc88a, #17a673);
+        }
+
+        .ai-card-header.purple {
+            background: linear-gradient(135deg, #6f42c1, #5a32a3);
+        }
+
+        .ai-card-header.orange {
+            background: linear-gradient(135deg, #fd7e14, #e06b10);
+        }
+
+        .ai-card-header .icon {
+            font-size: 24px;
+        }
+
+        .ai-card-header h3 {
             margin: 0;
-            font-size: 17px;
+            font-size: 15px;
+            font-weight: 700;
         }
 
-        .panel-header p {
-            margin: 4px 0 0;
-            font-size: 12px;
+        .ai-card-header p {
+            margin: 3px 0 0;
+            font-size: 11px;
             opacity: 0.85;
         }
 
-        .panel-body {
+        .ai-card-body {
             padding: 20px;
         }
 
-        .gen-btn {
+        /* ---- Form inputs inside cards ---- */
+        .ai-form-row {
+            margin-bottom: 14px;
+        }
+
+        .ai-form-row label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .ai-form-row input,
+        .ai-form-row select,
+        .ai-form-row textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            transition: var(--transition);
+            background: #fafbff;
+        }
+
+        .ai-form-row input:focus,
+        .ai-form-row select:focus,
+        .ai-form-row textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.12);
+            background: white;
+        }
+
+        .ai-form-row textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        /* ---- Action buttons ---- */
+        .ai-btn {
             width: 100%;
             padding: 12px;
-            background: #4e73df;
-            color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 15px;
-            margin-bottom: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: background 0.2s;
+            transition: var(--transition);
+            margin-bottom: 10px;
         }
 
-        .gen-btn:hover:not(:disabled) {
-            background: #2e59d9;
+        .ai-btn:active {
+            transform: scale(0.98);
         }
 
-        .gen-btn:disabled {
-            background: #aaa;
+        .ai-btn:disabled {
+            opacity: 0.6;
             cursor: default;
         }
 
-        /* Spinner */
-        .spinner {
-            display: none;
-            width: 18px;
-            height: 18px;
-            border: 3px solid rgba(255, 255, 255, 0.4);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        .ai-btn.blue {
+            background: linear-gradient(135deg, #4e73df, #3b55c4);
+            box-shadow: 0 4px 14px rgba(78, 115, 223, 0.3);
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+        .ai-btn.green {
+            background: linear-gradient(135deg, #1cc88a, #17a673);
+            box-shadow: 0 4px 14px rgba(28, 200, 138, 0.3);
         }
 
-        /* Markdown output */
+        .ai-btn.purple {
+            background: linear-gradient(135deg, #6f42c1, #5a32a3);
+            box-shadow: 0 4px 14px rgba(111, 66, 193, 0.3);
+        }
+
+        .ai-btn.orange {
+            background: linear-gradient(135deg, #fd7e14, #e06b10);
+            box-shadow: 0 4px 14px rgba(253, 126, 20, 0.3);
+        }
+
+        .ai-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            filter: brightness(1.05);
+        }
+
+        /* ---- Output area ---- */
         .ai-output {
             background: #f8f9ff;
             border: 1px solid #e0e7ff;
-            border-radius: 8px;
-            padding: 16px;
-            font-size: 14px;
-            line-height: 1.7;
-            color: #333;
+            border-radius: var(--radius-sm);
+            padding: 18px;
+            font-size: 13px;
+            line-height: 1.75;
+            color: var(--text);
             min-height: 80px;
-            white-space: pre-wrap;
-            /* preserve newlines */
+            max-height: 500px;
+            overflow-y: auto;
         }
 
         .ai-output.empty {
-            color: #bbb;
+            color: var(--text-muted);
             font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
         }
 
-        /* Table styling inside output */
+        .ai-output h2,
+        .ai-output h3,
+        .ai-output h4 {
+            color: var(--primary);
+            margin: 14px 0 6px;
+        }
+
+        .ai-output h2 {
+            font-size: 16px;
+        }
+
+        .ai-output h3 {
+            font-size: 14px;
+        }
+
+        .ai-output h4 {
+            font-size: 13px;
+        }
+
+        .ai-output strong {
+            color: #333;
+        }
+
+        .ai-output ul,
+        .ai-output ol {
+            padding-left: 20px;
+            margin: 6px 0;
+        }
+
+        .ai-output li {
+            margin: 4px 0;
+        }
+
         .ai-output table {
             border-collapse: collapse;
             width: 100%;
             margin: 10px 0;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .ai-output th {
-            background: #4e73df;
+            background: var(--primary);
             color: white;
-            padding: 7px 10px;
+            padding: 8px 10px;
             text-align: left;
+            font-size: 11px;
         }
 
         .ai-output td {
-            padding: 6px 10px;
+            padding: 7px 10px;
             border-bottom: 1px solid #eee;
         }
 
@@ -204,37 +254,86 @@
             background: #f0f4ff;
         }
 
+        .ai-output hr {
+            border: none;
+            border-top: 1px solid #e0e7ff;
+            margin: 14px 0;
+        }
+
+        /* Status messages */
         .status-msg {
             font-size: 13px;
-            color: #888;
+            color: var(--text-muted);
             margin-bottom: 8px;
             min-height: 18px;
         }
 
         .status-msg.error {
-            color: #dc3545;
+            color: var(--danger);
         }
 
         .status-msg.success {
-            color: #28a745;
+            color: var(--accent);
         }
 
         /* Copy button */
         .copy-btn {
             background: none;
-            border: 1px solid #4e73df;
-            color: #4e73df;
+            border: 1px solid var(--primary);
+            color: var(--primary);
             border-radius: 5px;
             padding: 4px 10px;
             font-size: 12px;
             cursor: pointer;
             float: right;
             margin-bottom: 6px;
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
         }
 
         .copy-btn:hover {
-            background: #4e73df;
+            background: var(--primary);
             color: white;
+        }
+
+        /* Subject chips */
+        .subject-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .subject-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1.5px solid transparent;
+        }
+
+        .subject-chip:hover {
+            border-color: var(--primary);
+        }
+
+        .subject-chip.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .no-data {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-style: italic;
+            padding: 8px 0;
         }
     </style>
 </head>
@@ -257,56 +356,133 @@
     </div>
 
     <div class="main">
-        <h2>🤖 AI Study Assistant</h2>
-        <p class="subtitle">Powered by OpenRouter · Your personalized AI-driven study planner and coach</p>
+        <h2 style="color: var(--primary); margin-bottom: 4px;">🤖 AI Study Assistant</h2>
+        <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 14px;">
+            Powered by AI · Generate timetables, quizzes, explanations & study tips
+        </p>
 
+        <div class="page-grid">
 
-
-        <div class="ai-grid">
-
-            <!-- AI TIMETABLE PANEL -->
-            <div class="ai-panel">
-                <div class="panel-header">
-                    <div class="icon">📅</div>
-                    <div>
-                        <h3>AI Study Timetable</h3>
-                        <p>Generates a personalized weekly schedule based on your subjects, exam date & study hours</p>
+            <!-- ========== COL 1 ========== -->
+            <div>
+                <!-- AI Study Tips -->
+                <div class="ai-card animate-fade" style="margin-bottom: 20px;">
+                    <div class="ai-card-header green">
+                        <div class="icon">💡</div>
+                        <div>
+                            <h3>AI Study Tips</h3>
+                            <p>Personalised tips based on your progress & weak areas</p>
+                        </div>
+                    </div>
+                    <div class="ai-card-body">
+                        <button class="ai-btn green" id="tipsBtn" onclick="generateTips()">
+                            <span class="spinner" id="tipsSpinner" style="display:none"></span>
+                            💡 Get Personalised Tips
+                        </button>
+                        <div class="status-msg" id="tipsStatus"></div>
+                        <div style="overflow:hidden">
+                            <button class="copy-btn" onclick="copyOutput('tipsOutput')">📋 Copy</button>
+                        </div>
+                        <div class="ai-output empty" id="tipsOutput">Click to get AI-powered study tips...</div>
                     </div>
                 </div>
-                <div class="panel-body">
-                    <button class="gen-btn" id="ttBtn" onclick="generateAITimetable()">
-                        <span class="spinner" id="ttSpinner"></span>
-                        ✨ Generate AI Timetable
-                    </button>
-                    <div class="status-msg" id="ttStatus"></div>
-                    <div style="overflow:hidden">
-                        <button class="copy-btn" onclick="copyOutput('ttOutput')">📋 Copy</button>
+
+                <!-- AI Quiz Generator -->
+                <div class="ai-card animate-fade">
+                    <div class="ai-card-header purple">
+                        <div class="icon">📝</div>
+                        <div>
+                            <h3>AI Quiz Generator</h3>
+                            <p>Practice with AI-generated MCQ questions</p>
+                        </div>
                     </div>
-                    <div class="ai-output empty" id="ttOutput">Click the button to generate your personalized AI
-                        timetable...</div>
+                    <div class="ai-card-body">
+                        <div class="ai-form-row">
+                            <label>📌 Select Subject</label>
+                            <div class="subject-chips" id="quizSubjectChips">
+                                <span class="no-data">Loading subjects...</span>
+                            </div>
+                        </div>
+                        <div class="ai-form-row">
+                            <label>📖 Topic <span style="font-weight:normal;color:#999">(optional)</span></label>
+                            <input type="text" id="quizTopic" placeholder="e.g. Thermodynamics, Calculus">
+                        </div>
+                        <div class="ai-form-row">
+                            <label>🎯 Difficulty</label>
+                            <select id="quizDifficulty">
+                                <option value="Easy">Easy</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="Hard">Hard</option>
+                            </select>
+                        </div>
+                        <button class="ai-btn purple" id="quizBtn" onclick="generateQuiz()">
+                            <span class="spinner" id="quizSpinner" style="display:none"></span>
+                            📝 Generate Quiz
+                        </button>
+                        <div class="status-msg" id="quizStatus"></div>
+                        <div style="overflow:hidden">
+                            <button class="copy-btn" onclick="copyOutput('quizOutput')">📋 Copy</button>
+                        </div>
+                        <div class="ai-output empty" id="quizOutput">Select a subject and click Generate Quiz...</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- AI TIPS PANEL -->
-            <div class="ai-panel">
-                <div class="panel-header">
-                    <div class="icon">💡</div>
-                    <div>
-                        <h3>AI Study Tips</h3>
-                        <p>Get personalized tips based on your current progress, weak areas & stress level</p>
+            <!-- ========== COL 2 ========== -->
+            <div>
+                <!-- AI Timetable Generator -->
+                <div class="ai-card animate-fade" style="margin-bottom: 20px;">
+                    <div class="ai-card-header blue">
+                        <div class="icon">📅</div>
+                        <div>
+                            <h3>AI Study Timetable</h3>
+                            <p>Generate a personalised weekly schedule with AI</p>
+                        </div>
+                    </div>
+                    <div class="ai-card-body">
+                        <button class="ai-btn blue" id="ttBtn" onclick="generateTimetable()">
+                            <span class="spinner" id="ttSpinner" style="display:none"></span>
+                            ✨ Generate AI Timetable
+                        </button>
+                        <div class="status-msg" id="ttStatus"></div>
+                        <div style="overflow:hidden">
+                            <button class="copy-btn" onclick="copyOutput('ttOutput')">📋 Copy</button>
+                        </div>
+                        <div class="ai-output empty" id="ttOutput">Click to generate your personalised AI timetable...
+                        </div>
                     </div>
                 </div>
-                <div class="panel-body">
-                    <button class="gen-btn" id="tipsBtn" onclick="generateAITips()">
-                        <span class="spinner" id="tipsSpinner"></span>
-                        💡 Get Personalized Tips
-                    </button>
-                    <div class="status-msg" id="tipsStatus"></div>
-                    <div style="overflow:hidden">
-                        <button class="copy-btn" onclick="copyOutput('tipsOutput')">📋 Copy</button>
+
+                <!-- AI Topic Explainer -->
+                <div class="ai-card animate-fade">
+                    <div class="ai-card-header orange">
+                        <div class="icon">🔍</div>
+                        <div>
+                            <h3>AI Topic Explainer</h3>
+                            <p>Get a detailed, clear explanation of any concept</p>
+                        </div>
                     </div>
-                    <div class="ai-output empty" id="tipsOutput">Click the button to get AI-powered study tips tailored
-                        to you...</div>
+                    <div class="ai-card-body">
+                        <div class="ai-form-row">
+                            <label>📚 Subject</label>
+                            <input type="text" id="explainSubject" placeholder="e.g. Physics, Mathematics">
+                        </div>
+                        <div class="ai-form-row">
+                            <label>📖 Topic to Explain</label>
+                            <input type="text" id="explainTopic"
+                                placeholder="e.g. Newton's Third Law, Integration by Parts">
+                        </div>
+                        <button class="ai-btn orange" id="explainBtn" onclick="generateExplanation()">
+                            <span class="spinner" id="explainSpinner" style="display:none"></span>
+                            🔍 Explain This Topic
+                        </button>
+                        <div class="status-msg" id="explainStatus"></div>
+                        <div style="overflow:hidden">
+                            <button class="copy-btn" onclick="copyOutput('explainOutput')">📋 Copy</button>
+                        </div>
+                        <div class="ai-output empty" id="explainOutput">Enter a subject and topic, then click Explain...
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -317,48 +493,82 @@
     <script>
         requireAuth();
 
-        // AI requests — server uses the key from config.py automatically
-        async function aiRequest(endpoint) {
-            const token = localStorage.getItem("token");
+        const BASE = BASE_URL;
+        const token = () => localStorage.getItem("token");
+        let allSubjects = [];
+        let selectedQuizSubject = "";
+
+        // =============================================
+        // LOAD SUBJECTS
+        // =============================================
+        async function loadSubjects() {
             try {
-                const res = await fetch(BASE_URL + endpoint, {
+                const res = await fetch(BASE + "/api/subjects/", {
+                    headers: { "Authorization": "Bearer " + token() }
+                });
+                if (res.status === 401) { localStorage.clear(); window.location.href = "login.html"; return; }
+                if (res.ok) {
+                    allSubjects = await res.json();
+                } else {
+                    allSubjects = [];
+                }
+            } catch (e) {
+                allSubjects = [];
+            }
+            renderQuizChips();
+        }
+
+        function renderQuizChips() {
+            const el = document.getElementById("quizSubjectChips");
+            if (!allSubjects.length) {
+                el.innerHTML = '<span class="no-data">No subjects found. Add subjects during registration.</span>';
+                return;
+            }
+            el.innerHTML = allSubjects.map(s =>
+                `<span class="subject-chip" onclick="selectQuizSubject(this, '${s.name}')">${s.name}</span>`
+            ).join("");
+        }
+
+        function selectQuizSubject(chip, name) {
+            document.querySelectorAll("#quizSubjectChips .subject-chip").forEach(c => c.classList.remove("selected"));
+            chip.classList.add("selected");
+            selectedQuizSubject = name;
+        }
+
+        // =============================================
+        // AI HELPERS
+        // =============================================
+        async function aiPost(endpoint, body) {
+            try {
+                const res = await fetch(BASE + endpoint, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + token
-                    }
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token() },
+                    body: JSON.stringify(body)
                 });
                 const json = await res.json();
                 json._ok = res.ok;
-                if (res.status === 401) {
-                    localStorage.clear();
-                    window.location.href = "login.html";
-                }
+                if (res.status === 401) { localStorage.clear(); window.location.href = "login.html"; }
                 return json;
             } catch (e) {
                 return { _ok: false, message: "Network error: " + e.message };
             }
         }
 
-        // ---- Convert basic markdown to HTML for display ----
+        // =============================================
+        // MARKDOWN RENDERER
+        // =============================================
         function renderMarkdown(text) {
             return text
-                // Headers
                 .replace(/^### (.+)$/gm, "<h4>$1</h4>")
                 .replace(/^## (.+)$/gm, "<h3>$1</h3>")
                 .replace(/^# (.+)$/gm, "<h2>$1</h2>")
-                // Bold
                 .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-                // Italic
                 .replace(/\*(.+?)\*/g, "<em>$1</em>")
-                // Bullet lists
                 .replace(/^[-•] (.+)$/gm, "<li>$1</li>")
                 .replace(/(<li>.*<\/li>\s*)+/g, m => `<ul>${m}</ul>`)
-                // Numbered lists
                 .replace(/^\d+\. (.+)$/gm, "<li>$1</li>")
-                // Line breaks
+                .replace(/^---$/gm, "<hr>")
                 .replace(/\n\n/g, "<br><br>")
-                // Markdown tables → HTML
                 .replace(/\|(.+)\|\n\|[-| :]+\|\n((?:\|.+\|\n?)+)/g, (_, header, rows) => {
                     const th = header.split("|").filter(c => c.trim()).map(c => `<th>${c.trim()}</th>`).join("");
                     const trs = rows.trim().split("\n").map(row => {
@@ -374,60 +584,114 @@
             document.getElementById(spinnerId).style.display = loading ? "inline-block" : "none";
         }
 
-        // ---- AI TIMETABLE ----
-        async function generateAITimetable() {
+        // =============================================
+        // GENERATE AI TIMETABLE
+        // =============================================
+        async function generateTimetable() {
             setLoading("ttBtn", "ttSpinner", true);
-            const status = document.getElementById("ttStatus");
-            status.className = "status-msg";
-            status.innerText = "🤖 AI is generating your timetable...";
+            const s = document.getElementById("ttStatus");
+            s.className = "status-msg"; s.innerText = "🤖 AI is building your personalised timetable...";
 
-            const res = await aiRequest("/api/ai/timetable");
-
+            const res = await aiPost("/api/ai/timetable", {});
             setLoading("ttBtn", "ttSpinner", false);
-            const output = document.getElementById("ttOutput");
+            const out = document.getElementById("ttOutput");
 
             if (res._ok && res.result) {
-                output.className = "ai-output";
-                output.innerHTML = renderMarkdown(res.result);
-                status.className = "status-msg success";
-                status.innerText = "✅ AI timetable generated!";
+                out.className = "ai-output"; out.innerHTML = renderMarkdown(res.result);
+                s.className = "status-msg success"; s.innerText = "✅ Timetable generated!";
             } else {
-                output.className = "ai-output empty";
-                output.innerHTML = res.message || "Failed to generate.";
-                status.className = "status-msg error";
-                status.innerText = "❌ " + (res.message || "Error");
+                out.className = "ai-output empty"; out.innerHTML = res.message || "Failed to generate.";
+                s.className = "status-msg error"; s.innerText = "❌ " + (res.message || "Error");
             }
         }
 
-        // ---- AI TIPS ----
-        async function generateAITips() {
+        // =============================================
+        // GENERATE AI TIPS
+        // =============================================
+        async function generateTips() {
             setLoading("tipsBtn", "tipsSpinner", true);
-            const status = document.getElementById("tipsStatus");
-            status.className = "status-msg";
-            status.innerText = "🤖 AI is crafting your personalized tips...";
+            const s = document.getElementById("tipsStatus");
+            s.className = "status-msg"; s.innerText = "🤖 Crafting your personalised tips...";
 
-            const res = await aiRequest("/api/ai/tips");
-
+            const res = await aiPost("/api/ai/tips", {});
             setLoading("tipsBtn", "tipsSpinner", false);
-            const output = document.getElementById("tipsOutput");
+            const out = document.getElementById("tipsOutput");
 
             if (res._ok && res.result) {
-                output.className = "ai-output";
-                output.innerHTML = renderMarkdown(res.result);
-                status.className = "status-msg success";
-                status.innerText = "✅ Tips generated!";
+                out.className = "ai-output"; out.innerHTML = renderMarkdown(res.result);
+                s.className = "status-msg success"; s.innerText = "✅ Tips generated!";
             } else {
-                output.className = "ai-output empty";
-                output.innerHTML = res.message || "Failed to generate.";
-                status.className = "status-msg error";
-                status.innerText = "❌ " + (res.message || "Error");
+                out.className = "ai-output empty"; out.innerHTML = res.message || "Failed to generate.";
+                s.className = "status-msg error"; s.innerText = "❌ " + (res.message || "Error");
+            }
+        }
+
+        // =============================================
+        // GENERATE AI QUIZ
+        // =============================================
+        async function generateQuiz() {
+            if (!selectedQuizSubject) {
+                alert("Please select a subject first.");
+                return;
+            }
+            setLoading("quizBtn", "quizSpinner", true);
+            const s = document.getElementById("quizStatus");
+            s.className = "status-msg"; s.innerText = "🤖 Generating quiz questions...";
+
+            const res = await aiPost("/api/ai/quiz", {
+                subject: selectedQuizSubject,
+                topic: document.getElementById("quizTopic").value.trim(),
+                difficulty: document.getElementById("quizDifficulty").value,
+                num_questions: 5
+            });
+            setLoading("quizBtn", "quizSpinner", false);
+            const out = document.getElementById("quizOutput");
+
+            if (res._ok && res.result) {
+                out.className = "ai-output"; out.innerHTML = renderMarkdown(res.result);
+                s.className = "status-msg success"; s.innerText = "✅ Quiz generated!";
+            } else {
+                out.className = "ai-output empty"; out.innerHTML = res.message || "Failed to generate.";
+                s.className = "status-msg error"; s.innerText = "❌ " + (res.message || "Error");
+            }
+        }
+
+        // =============================================
+        // GENERATE AI EXPLANATION
+        // =============================================
+        async function generateExplanation() {
+            const subject = document.getElementById("explainSubject").value.trim();
+            const topic = document.getElementById("explainTopic").value.trim();
+
+            if (!subject || !topic) {
+                alert("Please enter both a subject and a topic.");
+                return;
+            }
+
+            setLoading("explainBtn", "explainSpinner", true);
+            const s = document.getElementById("explainStatus");
+            s.className = "status-msg"; s.innerText = "🤖 Preparing explanation...";
+
+            const res = await aiPost("/api/ai/explain", { subject, topic });
+            setLoading("explainBtn", "explainSpinner", false);
+            const out = document.getElementById("explainOutput");
+
+            if (res._ok && res.result) {
+                out.className = "ai-output"; out.innerHTML = renderMarkdown(res.result);
+                s.className = "status-msg success"; s.innerText = "✅ Explanation ready!";
+            } else {
+                out.className = "ai-output empty"; out.innerHTML = res.message || "Failed to generate.";
+                s.className = "status-msg error"; s.innerText = "❌ " + (res.message || "Error");
             }
         }
 
         function copyOutput(id) {
-            const text = document.getElementById(id).innerText;
-            navigator.clipboard.writeText(text).then(() => alert("Copied!"));
+            navigator.clipboard.writeText(document.getElementById(id).innerText)
+                .then(() => alert("Copied to clipboard!"));
         }
+
+        // Init
+        loadSubjects();
     </script>
 
 </body>
