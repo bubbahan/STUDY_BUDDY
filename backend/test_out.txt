@@ -1,0 +1,55 @@
+Test email: test_38bdc649@sb.com
+
+====== AUTH ======
+[PASS] Register: 201 -> {'message': 'User registered successfully'}
+[PASS] Login: 200 -> {'level': 1, 'name': 'API Tester', 'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3MTY0MjI0NiwianRpIjoiNTk4YT
+
+====== USER PROFILE ======
+[PASS] GET /user/profile: 200 -> {'alarm_sound': 'classic', 'email': 'test_38bdc649@sb.com', 'exam_date': None, 'level': 1, 'name': 'API Tester', 'preference': 'morning', 'p
+  alarm_sound=classic  profile_photo=None
+[PASS] PUT /user/update (alarm_sound=chime): 200 -> {'message': 'Profile updated successfully'}
+[PASS] GET profile - verify alarm_sound saved: 200 -> {'alarm_sound': 'chime', 'email': 'test_38bdc649@sb.com', 'exam_date': None, 'level': 1, 'name': 'API Tester', 'preference': 'morning', 'pro
+  alarm_sound after save: chime  -> CORRECT
+[PASS] PUT update same email (should 200): 200 -> {'message': 'Profile updated successfully'}
+
+====== SUBJECTS ======
+[PASS] POST /subjects/ Physics freq=2: 201 -> {'difficulty': 'High', 'exam_date': '2026-04-10', 'frequency': 2, 'id': 5, 'message': 'Subject added', 'name': 'Physics', 'study_goal': '2 h
+[PASS] POST /subjects/ Mathematics freq=1: 201 -> {'difficulty': 'Medium', 'exam_date': '2026-05-01', 'frequency': 1, 'id': 6, 'message': 'Subject added', 'name': 'Mathematics', 'study_goal'
+[PASS] POST duplicate subject (expect 400): 400 -> {'message': "Subject 'Physics' already exists"}
+[PASS] GET /subjects/: 200 -> [{'difficulty': 'High', 'exam_date': '2026-04-10', 'frequency': 2, 'id': 5, 'name': 'Physics', 'study_goal': '2 hrs', 'units': 1}, {'difficu
+  Physics: diff=High freq=2 exam=2026-04-10 goal=2 hrs
+  Mathematics: diff=Medium freq=1 exam=2026-05-01 goal=1 hrs
+[PASS] GET /subjects/<id>: 200 -> {'difficulty': 'High', 'exam_date': '2026-04-10', 'frequency': 2, 'id': 5, 'name': 'Physics', 'study_goal': '2 hrs', 'units': 1}
+[PASS] PUT /subjects/<id> update: 200 -> {'difficulty': 'High', 'exam_date': '2026-04-10', 'frequency': 3, 'id': 5, 'message': 'Subject updated', 'name': 'Physics', 'study_goal': '3
+  Updated study_goal=3 hrs freq=3
+
+====== SYLLABUS ======
+[PASS] POST /syllabus/ add Kinematics: 201 -> {'completed': False, 'id': 1, 'message': 'Topic added', 'subject_id': 5, 'topic_name': 'Kinematics'}
+[PASS] POST /syllabus/ add Thermodynamics: 201 -> {'completed': False, 'id': 2, 'message': 'Topic added', 'subject_id': 5, 'topic_name': 'Thermodynamics'}
+[PASS] POST /syllabus/ add Optics: 201 -> {'completed': False, 'id': 3, 'message': 'Topic added', 'subject_id': 5, 'topic_name': 'Optics'}
+[PASS] GET /syllabus/<subject_id>: 200 -> {'completed': 0, 'percent': 0, 'topics': [{'completed': False, 'id': 1, 'subject_id': 5, 'topic_name': 'Kinematics'}, {'completed': False, '
+  total=3 completed=0 percent=0%
+[PASS] PUT /syllabus/<id>/toggle (mark done): 200 -> {'completed': True, 'id': 1, 'message': 'Updated', 'subject_id': 5, 'topic_name': 'Kinematics'}
+  topic1 completed=True
+[PASS] GET syllabus after toggle: 200 -> {'completed': 1, 'percent': 33, 'topics': [{'completed': True, 'id': 1, 'subject_id': 5, 'topic_name': 'Kinematics'}, {'completed': False, '
+  Progress: 1/3 = 33%
+[PASS] DELETE /syllabus/<id>: 200 -> {'message': 'Topic deleted'}
+[PASS] GET syllabus after delete (2 topics left): 200 -> {'completed': 1, 'percent': 50, 'topics': [{'completed': True, 'id': 1, 'subject_id': 5, 'topic_name': 'Kinematics'}, {'completed': False, '
+  Remaining topics: 2
+
+====== TIMETABLE ======
+[PASS] POST /timetable/generate: 200 -> {'days': 30, 'message': 'Timetable generated for 30 days with frequency-based scheduling.', 'subjects': 2}
+  Timetable generated for 30 days with frequency-based scheduling.
+[PASS] GET /timetable: 200 -> [{'date': '2026-02-21', 'id': 22, 'planned_hours': 3.0, 'subject': 'Physics'}, {'date': '2026-02-22', 'id': 23, 'planned_hours': 3.0, 'subje
+  Total entries: 37
+  Distribution: {'Physics': 30, 'Mathematics': 7}
+  Total planned hours: {'Physics': 90.0, 'Mathematics': 7.0}
+
+====== CLEANUP ======
+[PASS] DELETE /subjects/ Maths: 200 -> {'message': 'Subject removed'}
+[PASS] GET subjects after delete (1 left): 200 -> [{'difficulty': 'High', 'exam_date': '2026-04-10', 'frequency': 3, 'id': 5, 'name': 'Physics', 'study_goal': '3 hrs', 'units': 1}]
+  Remaining: ['Physics']
+
+============ RESULTS ============
+PASSED: 24/24
+All endpoints valid!

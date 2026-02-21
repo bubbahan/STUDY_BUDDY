@@ -1,0 +1,15 @@
+Register: 201
+Login: 200 | Got token: True
+Add subject: 201
+
+--- Testing POST /api/ai/tips ---
+Status: 503 | Time: 1.9 s
+[FAIL] /api/ai/tips -> {'message': 'OpenRouter returned 401. Check your API key and try again.'}
+
+--- Testing POST /api/ai/timetable ---
+Status: 503 | Time: 1.5 s
+[FAIL] /api/ai/timetable -> {'message': 'OpenRouter returned 401. Check your API key and try again.'}
+
+--- Direct OpenRouter API ping ---
+OpenRouter direct status: 401 | Time: 1.6 s
+[FAIL] OpenRouter error: {"error":{"message":"User not found.","code":401}}

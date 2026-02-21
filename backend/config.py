@@ -1,5 +1,9 @@
 import os
 import secrets
+from dotenv import load_dotenv
+
+# Load environment variables from .env file, overriding any existing terminal vars
+load_dotenv(override=True)
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
@@ -9,6 +13,6 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = False  # Tokens don't expire during development
 
     # OpenRouter AI API
-    OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY") or "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"
-    OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL") or "stepfun/step-3.5-flash:free"
-    OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions"
+    OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+    OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "stepfun/step-3.5-flash:free")
+    OPENROUTER_BASE_URL = os.environ.get("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1/chat/completions")
