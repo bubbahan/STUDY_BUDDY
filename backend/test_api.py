@@ -124,12 +124,14 @@ print('  ' + str(body.get('message')))
 
 r = requests.get(f'{BASE}/api/timetable', headers=H)
 body = check('GET /timetable', r, 200)
-if isinstance(body, list) and body:
-    subj_count = Counter(e['subject'] for e in body)
-    print('  Total entries: ' + str(len(body)))
+if isinstance(body, dict) and body:
+    # Flatten the grouped object for analysis
+    all_entries = [entry for date_list in body.values() for entry in date_list]
+    subj_count = Counter(e['subject'] for e in all_entries)
+    print('  Total entries: ' + str(len(all_entries)))
     print('  Distribution: ' + str(dict(subj_count)))
     # Check ordering by hours
-    hours = {k: sum(e['planned_hours'] for e in body if e['subject'] == k) for k in subj_count}
+    hours = {k: sum(e['planned_hours'] for e in all_entries if e['subject'] == k) for k in subj_count}
     print('  Total planned hours: ' + str({k: round(v, 1) for k, v in hours.items()}))
 
 print('\n====== CLEANUP ======')

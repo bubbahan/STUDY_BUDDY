@@ -5,58 +5,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timetable - StudyBuddy</title>
+    <link rel="stylesheet" href="css/style.css">
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
         }
 
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background: #4e73df;
-            color: white;
-            position: fixed;
-            padding-top: 20px;
+        .timetable-day-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+            overflow: hidden;
         }
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .sidebar a {
-            display: block;
+        .day-header {
+            background: #f8f9fc;
             padding: 12px 20px;
-            color: white;
-            text-decoration: none;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .sidebar a:hover {
-            background: #2e59d9;
-        }
-
-        .logout {
-            cursor: pointer;
-        }
-
-        .main {
-            margin-left: 220px;
-            padding: 24px;
-        }
-
-        .card {
-            background: white;
-            padding: 24px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .card h2 {
-            margin-top: 0;
-            color: #4e73df;
+        .day-header h3 {
+            margin: 0;
+            font-size: 14px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         table {
@@ -66,48 +47,31 @@
 
         th,
         td {
-            padding: 11px 14px;
-            border-bottom: 1px solid #eee;
             text-align: left;
+            padding: 12px 20px;
+            border-bottom: 1px solid #f0f2f5;
+            font-size: 13.5px;
         }
 
         th {
-            background: #f0f4ff;
-            color: #4e73df;
-            font-size: 13px;
-        }
-
-        tr:hover td {
             background: #fafbff;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
-        .btn {
-            padding: 10px 20px;
-            background: #4e73df;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
+        tr:last-child td {
+            border-bottom: none;
         }
 
-        .btn:hover {
-            background: #2e59d9;
-        }
-
-        .btn:disabled {
-            background: #aaa;
-        }
-
-        #msg {
-            margin-left: 12px;
-            font-size: 13px;
-        }
-
-        .empty {
-            color: #888;
+        .empty-state {
             text-align: center;
-            padding: 30px;
+            padding: 60px 40px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 2px dashed var(--border);
         }
     </style>
 </head>
@@ -121,7 +85,7 @@
         <a href="session.html">⏱ Study Session</a>
         <a href="alarm.html">⏰ Alarm</a>
         <a href="progress.html">📊 Progress</a>
-        <a href="courses.html">📚 Courses</a>
+        <a href="courses.html">📚 My Subjects</a>
         <a href="weak.html">⚠️ Weak Areas</a>
         <a href="gamification.html">🎮 Gamification</a>
         <a href="ai_study.html">🤖 AI Assistant</a>
@@ -130,16 +94,22 @@
     </div>
 
     <div class="main">
-        <div class="card">
-            <div style="display:flex; align-items:center; margin-bottom:16px;">
-                <h2 style="margin:0">📅 Study Timetable</h2>
-                <button class="btn" id="genBtn" onclick="generatePlan()" style="margin-left:auto;">Generate New
-                    Plan</button>
-                <span id="msg"></span>
+        <div class="page-header animate-fade">
+            <div>
+                <h2 style="color:var(--primary);margin:0">📅 Standard Timetable</h2>
+                <p style="color:var(--text-muted);font-size:14px;margin:4px 0 0">Algorithmic schedule based on subject
+                    frequency & exam priority</p>
             </div>
-            <div id="tableContainer">
-                <p class="empty">Loading...</p>
+            <div style="display:flex; align-items:center; gap: 15px;">
+                <span id="msg" style="font-size:13px"></span>
+                <button class="btn btn-primary" id="genBtn" onclick="generatePlan()" style="padding: 10px 20px;">
+                    ✨ Generate New Plan
+                </button>
             </div>
+        </div>
+
+        <div id="timetableContainer" class="animate-fade" style="animation-delay:0.1s">
+            <div style="text-align:center; padding:40px; color:var(--text-muted)">Loading timetable...</div>
         </div>
     </div>
 
@@ -148,27 +118,65 @@
         requireAuth();
 
         async function loadTimetable() {
-            const entries = await getTimetable();
-            const container = document.getElementById("tableContainer");
+            const data = await getTimetable();
+            const container = document.getElementById("timetableContainer");
 
-            if (!Array.isArray(entries) || entries.length === 0) {
-                container.innerHTML = '<p class="empty">No timetable found. Click "Generate New Plan" to create one.</p>';
+            // Backend returns { "YYYY-MM-DD": [ {subject, planned_hours...}, ... ], ... }
+            const dates = Object.keys(data).sort();
+
+            if (dates.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size:48px; margin-bottom:15px">📅</div>
+                        <h3>No Timetable Found</h3>
+                        <p style="color:var(--text-muted); max-width:400px; margin:10px auto">
+                            Click the button above to generate a smart study plan based on your subjects and exam dates.
+                        </p>
+                    </div>`;
                 return;
             }
 
-            let html = `<table>
-            <tr>
-                <th>#</th><th>Date</th><th>Subject</th><th>Planned Hours</th>
-            </tr>`;
-            entries.forEach((e, i) => {
-                html += `<tr>
-                <td>${i + 1}</td>
-                <td>${e.date}</td>
-                <td>${e.subject}</td>
-                <td>${e.planned_hours} hrs</td>
-            </tr>`;
+            let html = "";
+            dates.forEach(dateStr => {
+                const entries = data[dateStr];
+                const cleanDate = new Date(dateStr).toLocaleDateString(undefined, {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                html += `
+                <div class="timetable-day-card">
+                    <div class="day-header">
+                        <span style="font-size:18px">📌</span>
+                        <h3>${cleanDate}</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Planned Hours</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${entries.map(e => `
+                                <tr>
+                                    <td style="font-weight:600; color:var(--primary)">${e.subject}</td>
+                                    <td>${e.planned_hours} hours</td>
+                                    <td>
+                                        <span class="badge ${e.completed ? 'badge-success' : 'badge-primary'}">
+                                            ${e.completed ? 'Completed' : 'Planned'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </div>`;
             });
-            html += '</table>';
+
             container.innerHTML = html;
         }
 
@@ -176,24 +184,24 @@
             const btn = document.getElementById("genBtn");
             const msg = document.getElementById("msg");
             btn.disabled = true;
-            msg.style.color = "#333";
-            msg.innerText = "Generating...";
+            msg.style.color = "var(--text)";
+            msg.innerText = "Generating schedule...";
 
             const res = await generateTimetable();
             if (res._ok) {
-                msg.style.color = "#28a745";
+                msg.style.color = "var(--accent)";
                 msg.innerText = "✅ " + (res.message || "Generated!");
                 loadTimetable();
             } else {
-                msg.style.color = "red";
-                msg.innerText = "❌ " + (res.message || "Failed");
+                msg.style.color = "var(--danger)";
+                msg.innerText = "❌ " + (res.message || "Failed. Ensure you have subjects added.");
             }
+            setTimeout(() => { msg.innerText = ""; }, 4000);
             btn.disabled = false;
         }
 
         loadTimetable();
     </script>
-
 </body>
 
 </html>

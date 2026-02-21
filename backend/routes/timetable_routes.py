@@ -60,9 +60,19 @@ def generate_timetable():
 
     for i in range(days_to_generate):
         current_date = today + timedelta(days=i)
+        
+        # Schedule at least ONE subject per day even if frequency logic would skip all
+        daily_scheduled = 0
 
-        for s in subjects_sorted:
+        for idx, s in enumerate(subjects_sorted):
             freq = s.frequency or 1
+
+            # Only schedule subject on certain days based on frequency
+            # Using (i + idx) ensures different subjects hit different days
+            if freq < total_weight:
+                interval = max(1, round(total_weight / freq))
+                if (i + idx) % interval != 0:
+                    continue
 
             # Weight-based hours for this subject today
             weight_share = freq / total_weight
@@ -71,9 +81,11 @@ def generate_timetable():
             # Use per-subject study_goal if provided (parse numeric part)
             if s.study_goal:
                 try:
-                    parsed = float("".join(c for c in s.study_goal if c.isdigit() or c == "."))
-                    if parsed > 0:
-                        subject_hours = parsed
+                    num_str = "".join(c for c in s.study_goal if c.isdigit() or c == ".")
+                    if num_str:
+                        parsed = float(num_str)
+                        if parsed > 0:
+                            subject_hours = parsed
                 except (ValueError, TypeError):
                     pass
 
@@ -86,16 +98,22 @@ def generate_timetable():
                 if 0 <= days_to_exam <= 7:
                     subject_hours = round(subject_hours * 1.2, 1)
 
-            # Only schedule subject on certain days based on frequency
-            if freq < total_weight:
-                interval = max(1, round(total_weight / freq))
-                if (i % interval) != (s.id % interval):
-                    continue
-
             schedule = Timetable(
                 date=current_date,
                 subject=s.name,
                 planned_hours=subject_hours,
+                user_id=user_id
+            )
+            db.session.add(schedule)
+            daily_scheduled += 1
+
+        # Fallback: if nothing scheduled today (rare), pick the most frequent subject
+        if daily_scheduled == 0 and subjects_sorted:
+            s = subjects_sorted[0]
+            schedule = Timetable(
+                date=current_date,
+                subject=s.name,
+                planned_hours=round(study_hours / 2, 1) or 2.0,
                 user_id=user_id
             )
             db.session.add(schedule)
