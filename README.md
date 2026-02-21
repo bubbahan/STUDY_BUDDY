@@ -2,27 +2,30 @@
   <img src="./img.png" alt="Project Banner" width="100%">
 </p>
 
-# [Project Name] 🎯
+# [StudyBuddy] 🎯
 
 ## Basic Details
 
-### Team Name: [Name]
+### Team Name: [SHECODES]
 
 ### Team Members
-- Member 1: [Name] - [College]
-- Member 2: [Name] - [College]
+- Member 1: [Nandana krishna] - [College of engineering attingal]
+- Member 2: [Suhana salim] - [College of engineering attingal]
 
 ### Hosted Project Link
-[mention your project hosted link here]
+[]
 
 ### Project Description
-[2-3 lines about what your project does]
+[Study Buddy is a smart learning assistant that creates personalized study plans, generates ideas to cover portions, and tracks progress to boost retention. 
+It adapts to each user's learning style, suggests resources, and schedules reminders to keep study sessions consistent.]
 
 ### The Problem statement
-[What problem are you solving?]
+
+[Students struggle with productivity and consistent learning due to poor time management, lack of structured planning, irregular habits, and fragmented tools, creating a need for a unified platform that integrates smart scheduling, progress tracking, discipline support, and continuous learning pathways in one system.]
 
 ### The Solution
-[How are you solving it?]
+[StudyBuddy provides a unified smart learning platform that combines intelligent scheduling, discipline tracking, performance analysis, gamification, and continuous course progression to help students study consistently, improve productivity, and achieve long-term academic growth in one ecosystem.
+]
 
 ---
 
@@ -31,25 +34,24 @@
 ### Technologies/Components Used
 
 **For Software:**
-- Languages used: [e.g., JavaScript, Python, Java]
-- Frameworks used: [e.g., React, Django, Spring Boot]
-- Libraries used: [e.g., axios, pandas, JUnit]
-- Tools used: [e.g., VS Code, Git, Docker]
+- 
 
-**For Hardware:**
-- Main components: [List main components]
-- Specifications: [Technical specifications]
-- Tools required: [List tools needed]
+**Frontend:** HTML, CSS, and JavaScript
+**Backend:** Python with Flask framework
 
----
+
+
+**This project is developed using HTML, CSS, and JavaScript for the frontend and Python Flask for the backend.**
+
+
 
 ## Features
 
 List the key features of your project:
-- Feature 1: [Description]
-- Feature 2: [Description]
-- Feature 3: [Description]
-- Feature 4: [Description]
+- Feature 1: [Intelligent syllabus planning based on exam date]
+- Feature 2: [Sleep-based smart timetable generation]
+- Feature 3: [Weak area detection and performance analysis]
+- Feature 4: [Study session timer and tracking system]
 
 ---
 
@@ -67,13 +69,6 @@ List the key features of your project:
 [Run commands - e.g., npm start, python app.py]
 ```
 
-### For Hardware:
-
-#### Components Required
-[List all components needed with specifications]
-
-#### Circuit Setup
-[Explain how to set up the circuit]
 
 ---
 
@@ -99,26 +94,39 @@ List the key features of your project:
 ![Architecture Diagram](docs/architecture.png)
 *Explain your system architecture - components, data flow, tech stack interaction*
 
-**Application Workflow:**
-
-![Workflow](docs/workflow.png)
-*Add caption explaining your workflow*
-
 ---
 
-### For Hardware:
+## Project Workflow
 
-#### Schematic & Circuit
+1. **User Registration & Onboarding**
+   The student enters academic details, subjects, exam date, study hours, and sleep schedule.
 
-![Circuit](Add your circuit diagram here)
-*Add caption explaining connections*
+2. **Smart Plan Generation**
+   The system analyzes the data and automatically creates a personalized timetable based on exam priority, productivity window, and sleep cycle.
 
-![Schematic](Add your schematic diagram here)
-*Add caption explaining the schematic*
+3. **Daily Study Execution**
+   The student follows the generated schedule, uses the study session timer, and completes planned targets.
+
+4. **Discipline & Habit Tracking**
+   Smart alarm, streak monitoring, and reminders help maintain consistency and discipline.
+
+5. **Performance Analysis**
+   The system tracks progress, detects weak areas, predicts stress levels, and provides revision suggestions.
+
+6. **Gamification & Motivation**
+   Students earn points, badges, and levels based on performance and consistency.
+
+7. **Course Learning & Progression**
+   Students access courses, complete lessons and quizzes, and after completion the next level unlocks automatically with personalized recommendations.
+
+8. **Continuous Improvement**
+   The system adapts schedules, updates progress insights, and maintains long-term learning pathways within the same platform.
+
+
 
 #### Build Photos
 
-![Team](Add photo of your team here)
+![](Add photo of your team here)
 
 ![Components](Add photo of your components here)
 *List out all components shown*
@@ -142,10 +150,7 @@ List the key features of your project:
 ##### Endpoints
 
 **GET /api/endpoint**
-- **Description:** [What it does]
-- **Parameters:**
-  - `param1` (string): [Description]
-  - `param2` (integer): [Description]
+- **Description:** [StudyBuddy is a smart academic planner and intelligent learning ecosystem designed to help students improve productivity, maintain discipline, and achieve consistent academic growth. The system generates personalized study schedules based on exam dates, subjects, available study hours, and sleep patterns, ensuring efficient time management and balanced learning.]
 - **Response:**
 ```json
 {
@@ -169,36 +174,7 @@ List the key features of your project:
   "status": "success",
   "message": "Operation completed"
 }
-```
 
-[Add more endpoints as needed...]
-
----
-
-### For Mobile Apps:
-
-#### App Flow Diagram
-
-![App Flow](docs/app-flow.png)
-*Explain the user flow through your application*
-
-#### Installation Guide
-
-**For Android (APK):**
-1. Download the APK from [Release Link]
-2. Enable "Install from Unknown Sources" in your device settings:
-   - Go to Settings > Security
-   - Enable "Unknown Sources"
-3. Open the downloaded APK file
-4. Follow the installation prompts
-5. Open the app and enjoy!
-
-**For iOS (IPA) - TestFlight:**
-1. Download TestFlight from the App Store
-2. Open this TestFlight link: [Your TestFlight Link]
-3. Click "Install" or "Accept"
-4. Wait for the app to install
-5. Open the app from your home screen
 
 **Building from Source:**
 ```bash
@@ -211,26 +187,7 @@ flutter build apk
 flutter build ios
 # or
 xcodebuild -workspace App.xcworkspace -scheme App -configuration Debug
-```
 
----
-
-### For Hardware Projects:
-
-#### Bill of Materials (BOM)
-
-| Component | Quantity | Specifications | Price | Link/Source |
-|-----------|----------|----------------|-------|-------------|
-| Arduino Uno | 1 | ATmega328P, 16MHz | ₹450 | [Link] |
-| LED | 5 | Red, 5mm, 20mA | ₹5 each | [Link] |
-| Resistor | 5 | 220Ω, 1/4W | ₹1 each | [Link] |
-| Breadboard | 1 | 830 points | ₹100 | [Link] |
-| Jumper Wires | 20 | Male-to-Male | ₹50 | [Link] |
-| [Add more...] | | | | |
-
-**Total Estimated Cost:** ₹[Amount]
-
-#### Assembly Instructions
 
 **Step 1: Prepare Components**
 1. Gather all components listed in the BOM
@@ -269,19 +226,6 @@ xcodebuild -workspace App.xcworkspace -scheme App -configuration Debug
 **Basic Usage:**
 ```bash
 python script.py [options] [arguments]
-```
-
-**Available Commands:**
-- `command1 [args]` - Description of what command1 does
-- `command2 [args]` - Description of what command2 does
-- `command3 [args]` - Description of what command3 does
-
-**Options:**
-- `-h, --help` - Show help message and exit
-- `-v, --verbose` - Enable verbose output
-- `-o, --output FILE` - Specify output file path
-- `-c, --config FILE` - Specify configuration file
-- `--version` - Show version information
 
 **Examples:**
 
@@ -313,60 +257,13 @@ for demonstration purposes
 **Command:**
 ```bash
 python script.py sample.txt
-```
 
-**Output:**
-```
-Processing: sample.txt
-Lines processed: 3
-Characters counted: 86
-Status: Success
-Output saved to: output.txt
-```
-
-**Example 2: Advanced Usage**
-
-**Input:**
-```json
-{
-  "name": "test",
-  "value": 123
-}
 ```
 
 **Command:**
 ```bash
 python script.py -v --format json data.json
-```
 
-**Output:**
-```
-[VERBOSE] Loading configuration...
-[VERBOSE] Parsing JSON input...
-[VERBOSE] Processing data...
-{
-  "status": "success",
-  "processed": true,
-  "result": {
-    "name": "test",
-    "value": 123,
-    "timestamp": "2024-02-07T10:30:00"
-  }
-}
-[VERBOSE] Operation completed in 0.23s
-```
-
----
-
-## Project Demo
-
-### Video
-[Add your demo video link here - YouTube, Google Drive, etc.]
-
-*Explain what the video demonstrates - key features, user flow, technical highlights*
-
-### Additional Demos
-[Add any extra demo materials/links - Live site, APK download, online demo, etc.]
 
 ---
 
@@ -374,46 +271,37 @@ python script.py -v --format json data.json
 
 If you used AI tools during development, document them here for transparency:
 
-**Tool Used:** [e.g., GitHub Copilot, v0.dev, Cursor, ChatGPT, Claude]
+**Tool Used:** HTML, CSS, JavaScript — Frontend development and user interface design
 
-**Purpose:** [What you used it for]
-- Example: "Generated boilerplate React components"
-- Example: "Debugging assistance for async functions"
-- Example: "Code review and optimization suggestions"
+Python (Flask) — Backend development and server-side logic
+
+Chart.js — Data visualization and progress graphs
+
+VS Code — Code editor for development
+
+Git & GitHub — Version control and project hosting
+
+**Purpose:** The purpose of StudyBuddy is to help students manage their time effectively, build consistent study habits, reduce exam stress, and improve academic performance through intelligent planning, discipline tracking, performance analysis, and continuous learning within a single platform.
 
 **Key Prompts Used:**
-- "Create a REST API endpoint for user authentication"
-- "Debug this async function that's causing race conditions"
-- "Optimize this database query for better performance"
-
+-“Develop a smart academic planner and learning management system that generates personalized study schedules based on exam dates, subjects, available study hours, and sleep patterns. The system should include discipline features like smart alarms, study tracking, weak area detection, performance analytics, gamification, and automatic next-level course progression within the same platform using HTML, CSS, JavaScript for the frontend and Python Flask for the backend.”
 **Percentage of AI-generated code:** [Approximately X%]
 
 **Human Contributions:**
 - Architecture design and planning
-- Custom business logic implementation
-- Integration and testing
+-Integration and testing
 - UI/UX design decisions
 
-*Note: Proper documentation of AI usage demonstrates transparency and earns bonus points in evaluation!*
 
 ---
 
 ## Team Contributions
 
-- [Name 1]: [Specific contributions - e.g., Frontend development, API integration, etc.]
-- [Name 2]: [Specific contributions - e.g., Backend development, Database design, etc.]
-- [Name 3]: [Specific contributions - e.g., UI/UX design, Testing, Documentation, etc.]
+- [Nandana krishna]: [ Frontend development, API integration]
+- [suhana salim]: [ Backend development, Database design]
 
----
 
-## License
 
-This project is licensed under the [LICENSE_NAME] License - see the [LICENSE](LICENSE) file for details.
-
-**Common License Options:**
-- MIT License (Permissive, widely used)
-- Apache 2.0 (Permissive with patent grant)
-- GPL v3 (Copyleft, requires derivative works to be open source)
 
 ---
 
