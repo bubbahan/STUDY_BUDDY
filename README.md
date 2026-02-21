@@ -13,7 +13,7 @@
 - Member 2: [Suhana salim] - [College of engineering attingal]
 
 ### Hosted Project Link
-[]
+https://study-buddy-02lq.onrender.com/
 
 ### Project Description
 [Study Buddy is a smart learning assistant that creates personalized study plans, generates ideas to cover portions, and tracks progress to boost retention. 
