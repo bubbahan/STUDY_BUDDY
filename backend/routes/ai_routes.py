@@ -48,7 +48,11 @@ def ai_timetable():
         )
         return jsonify({"result": result})
     except RuntimeError as e:
-        return jsonify({"message": str(e)}), 503
+        status_code = 503
+        if "(401)" in str(e): status_code = 401
+        elif "(402)" in str(e): status_code = 402
+        elif "(429)" in str(e): status_code = 429
+        return jsonify({"message": str(e)}), status_code
 
 
 # =============================
@@ -103,7 +107,11 @@ def ai_tips():
         )
         return jsonify({"result": result})
     except RuntimeError as e:
-        return jsonify({"message": str(e)}), 503
+        status_code = 503
+        if "(401)" in str(e): status_code = 401
+        elif "(402)" in str(e): status_code = 402
+        elif "(429)" in str(e): status_code = 429
+        return jsonify({"message": str(e)}), status_code
 
 
 # =============================
@@ -139,7 +147,11 @@ def ai_quiz():
         )
         return jsonify({"result": result})
     except RuntimeError as e:
-        return jsonify({"message": str(e)}), 503
+        status_code = 503
+        if "(401)" in str(e): status_code = 401
+        elif "(402)" in str(e): status_code = 402
+        elif "(429)" in str(e): status_code = 429
+        return jsonify({"message": str(e)}), status_code
 
 
 # =============================
@@ -173,4 +185,8 @@ def ai_explain():
         )
         return jsonify({"result": result})
     except RuntimeError as e:
-        return jsonify({"message": str(e)}), 503
+        status_code = 503
+        if "(401)" in str(e): status_code = 401
+        elif "(402)" in str(e): status_code = 402
+        elif "(429)" in str(e): status_code = 429
+        return jsonify({"message": str(e)}), status_code

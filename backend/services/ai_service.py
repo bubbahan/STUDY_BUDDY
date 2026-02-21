@@ -29,7 +29,7 @@ class AIService:
             headers={
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json",
-                "HTTP-Referer": "http://localhost:5000",
+                "HTTP-Referer": "http://127.0.0.1:5000",
                 "X-Title": "StudyBuddy"
             },
             json={
@@ -44,12 +44,18 @@ class AIService:
         if response.status_code == 401:
             raise RuntimeError(
                 "OpenRouter API Key is invalid or expired (401). "
-                "Please check your API Key in the configuration bar at the top of the AI page."
+                "Please verify your API key in the configuration bar at the top of the page. "
+                "Ensure it starts with 'sk-or-v1-'."
             )
+        elif response.status_code == 402:
+             raise RuntimeError("OpenRouter: Insufficient balance/credits for this API key.")
+        elif response.status_code == 429:
+             raise RuntimeError("OpenRouter: Rate limit exceeded. Please wait a moment.")
         elif response.status_code != 200:
+            error_msg = response.text[:200]
             raise RuntimeError(
-                f"OpenRouter returned {response.status_code}. "
-                f"Check your API key and try again."
+                f"OpenRouter error ({response.status_code}): {error_msg}. "
+                "Please check your settings and try again."
             )
 
         data = response.json()

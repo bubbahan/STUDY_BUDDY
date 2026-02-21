@@ -118,66 +118,91 @@
         requireAuth();
 
         async function loadTimetable() {
-            const data = await getTimetable();
             const container = document.getElementById("timetableContainer");
+            try {
+                const data = await getTimetable();
 
-            // Backend returns { "YYYY-MM-DD": [ {subject, planned_hours...}, ... ], ... }
-            const dates = Object.keys(data).sort();
+                if (!data || !data._ok) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div style="font-size:48px; margin-bottom:15px">❌</div>
+                            <h3>Connection Error</h3>
+                            <p style="color:var(--text-muted); max-width:400px; margin:10px auto">
+                                ${(data && data.message) ? data.message : "Could not connect to the study server. Ensure the backend is running."}
+                            </p>
+                        </div>`;
+                    return;
+                }
 
-            if (dates.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div style="font-size:48px; margin-bottom:15px">📅</div>
-                        <h3>No Timetable Found</h3>
-                        <p style="color:var(--text-muted); max-width:400px; margin:10px auto">
-                            Click the button above to generate a smart study plan based on your subjects and exam dates.
-                        </p>
+                // Backend returns { "YYYY-MM-DD": [ {subject, planned_hours...}, ... ], ... }
+                // Filter keys that are actual dates
+                const dates = Object.keys(data).filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k)).sort();
+
+                if (dates.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div style="font-size:48px; margin-bottom:15px">📅</div>
+                            <h3>No Timetable Found</h3>
+                            <p style="color:var(--text-muted); max-width:400px; margin:10px auto">
+                                Click the button above to generate a smart study plan based on your subjects and exam dates.
+                            </p>
+                        </div>`;
+                    return;
+                }
+
+                let html = "";
+                dates.forEach(dateStr => {
+                    const entries = data[dateStr];
+                    const cleanDate = new Date(dateStr).toLocaleDateString(undefined, {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+
+                    html += `
+                    <div class="timetable-day-card">
+                        <div class="day-header">
+                            <span style="font-size:18px">📌</span>
+                            <h3>${cleanDate}</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Planned Hours</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${entries.map(e => `
+                                    <tr>
+                                        <td style="font-weight:600; color:var(--primary)">${e.subject}</td>
+                                        <td>${e.planned_hours} hours</td>
+                                        <td>
+                                            <span class="badge ${e.completed ? 'badge-success' : 'badge-primary'}">
+                                                ${e.completed ? 'Completed' : 'Planned'}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                `).join("")}
+                            </tbody>
+                        </table>
                     </div>`;
-                return;
-            }
-
-            let html = "";
-            dates.forEach(dateStr => {
-                const entries = data[dateStr];
-                const cleanDate = new Date(dateStr).toLocaleDateString(undefined, {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
                 });
 
-                html += `
-                <div class="timetable-day-card">
-                    <div class="day-header">
-                        <span style="font-size:18px">📌</span>
-                        <h3>${cleanDate}</h3>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Subject</th>
-                                <th>Planned Hours</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${entries.map(e => `
-                                <tr>
-                                    <td style="font-weight:600; color:var(--primary)">${e.subject}</td>
-                                    <td>${e.planned_hours} hours</td>
-                                    <td>
-                                        <span class="badge ${e.completed ? 'badge-success' : 'badge-primary'}">
-                                            ${e.completed ? 'Completed' : 'Planned'}
-                                        </span>
-                                    </td>
-                                </tr>
-                            `).join("")}
-                        </tbody>
-                    </table>
-                </div>`;
-            });
-
-            container.innerHTML = html;
+                container.innerHTML = html;
+            } catch (err) {
+                console.error("Timetable logic error:", err);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size:48px; margin-bottom:15px">⚠️</div>
+                        <h3>Application Error</h3>
+                        <p style="color:var(--text-muted); max-width:400px; margin:10px auto">
+                            A script error occurred while loading your timetable. Check the browser console for details.
+                        </p>
+                    </div>`;
+            }
         }
 
         async function generatePlan() {

@@ -82,6 +82,33 @@
             font-size: 15px;
         }
 
+        .level-progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .level-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 1s ease-out;
+            border-radius: 4px;
+        }
+
+        .level-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
         .cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -302,7 +329,15 @@
                 <div class="header-avatar" id="headerAvatar">?</div>
                 <div class="header-info">
                     <h2 id="welcomeText">Welcome, Student 👋</h2>
-                    <p>Ready to level up your knowledge today?</p>
+                    <div style="width: 250px;">
+                        <div class="level-progress-container">
+                            <div class="level-progress-bar" id="levelBar"></div>
+                        </div>
+                        <div class="level-label">
+                            <span id="levelLabel">Level 1</span>
+                            <span id="xpLabel">0 / 100 XP</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="header-stats">
@@ -388,7 +423,11 @@
 
         async function loadDashboard() {
             const data = await getDashboardData();
-            if (!data || !data._ok) return;
+            if (!data || !data._ok) {
+                const container = document.getElementById("planContainer");
+                if (container) container.innerHTML = '<p style="color:red;padding:20px;text-align:center">Connection Error: Could not reach backend server.</p>';
+                return;
+            }
 
             // Header profile info
             document.getElementById("welcomeText").innerText = `Welcome, ${data.name || 'Student'} 👋`;
@@ -400,9 +439,18 @@
             }
 
             // Header stats
-            document.getElementById("levelText").innerText = data.level || 1;
-            document.getElementById("xpText").innerText = data.xp || 0;
+            const level = data.level || 1;
+            const xp = data.xp || 0;
+            const nextLevelXp = 100; // Based on GamificationEngine.LEVEL_UP_XP
+            const progress = (xp / nextLevelXp) * 100;
+
+            document.getElementById("levelText").innerText = level;
+            document.getElementById("xpText").innerText = xp;
             document.getElementById("streakText").innerText = (data.streak || 0) + " Days";
+
+            document.getElementById("levelBar").style.width = `${progress}%`;
+            document.getElementById("levelLabel").innerText = `Level ${level}`;
+            document.getElementById("xpLabel").innerText = `${Math.round(xp)} / ${nextLevelXp} XP`;
 
             // Cards
             document.getElementById("studyHours").innerText = (data.total_study_hours || 0) + " Hrs";

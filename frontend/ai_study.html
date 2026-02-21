@@ -361,8 +361,9 @@
             Powered by AI · Generate timetables, quizzes, explanations & study tips
         </p>
 
+        <!-- API Configuration Bar (Hidden because it's now inbuilt) -->
         <div class="header animate-fade"
-            style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border);">
+            style="display: none; margin-bottom: 24px; justify-content: space-between; align-items: center; background: #fff; padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border);">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <span style="font-size: 24px;">🔑</span>
                 <div>
@@ -583,11 +584,6 @@
                     "Content-Type": "application/json",
                     "Authorization": "Bearer " + token()
                 };
-
-                const userKey = getApiKey();
-                if (userKey) {
-                    headers["X-OpenRouter-Key"] = userKey;
-                }
 
                 const res = await fetch(BASE + endpoint, {
                     method: "POST",

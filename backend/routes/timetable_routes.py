@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models import User, Subject, Timetable
+from models import User, Subject, Timetable, Syllabus
 from database import db
 from datetime import date, timedelta
 
@@ -58,6 +58,16 @@ def generate_timetable():
     # Clear old timetable
     Timetable.query.filter_by(user_id=user_id).delete()
 
+    # Pre-fetch syllabus topics for each subject
+    subject_topics = {}
+    for s in subjects:
+        # Get uncompleted topics, ordered by ID (assuming ID reflects order)
+        topics = Syllabus.query.filter_by(subject_id=s.id, completed=False).order_by(Syllabus.id).all()
+        subject_topics[s.name] = [t.topic_name for t in topics]
+    
+    # Topic counters to rotate through available topics
+    topic_indices = {s.name: 0 for s in subjects}
+
     for i in range(days_to_generate):
         current_date = today + timedelta(days=i)
         
@@ -98,9 +108,16 @@ def generate_timetable():
                 if 0 <= days_to_exam <= 7:
                     subject_hours = round(subject_hours * 1.2, 1)
 
+            # Assign topic if available
+            display_name = s.name
+            if subject_topics[s.name]:
+                idx = topic_indices[s.name] % len(subject_topics[s.name])
+                display_name = f"{s.name} - {subject_topics[s.name][idx]}"
+                topic_indices[s.name] += 1
+
             schedule = Timetable(
                 date=current_date,
-                subject=s.name,
+                subject=display_name,
                 planned_hours=subject_hours,
                 user_id=user_id
             )
@@ -110,9 +127,17 @@ def generate_timetable():
         # Fallback: if nothing scheduled today (rare), pick the most frequent subject
         if daily_scheduled == 0 and subjects_sorted:
             s = subjects_sorted[0]
+            
+            # Assign topic if available
+            display_name = s.name
+            if subject_topics[s.name]:
+                idx = topic_indices[s.name] % len(subject_topics[s.name])
+                display_name = f"{s.name} - {subject_topics[s.name][idx]}"
+                topic_indices[s.name] += 1
+
             schedule = Timetable(
                 date=current_date,
-                subject=s.name,
+                subject=display_name,
                 planned_hours=round(study_hours / 2, 1) or 2.0,
                 user_id=user_id
             )
