@@ -361,6 +361,24 @@
             Powered by AI · Generate timetables, quizzes, explanations & study tips
         </p>
 
+        <div class="header animate-fade"
+            style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 24px;">🔑</span>
+                <div>
+                    <h4 style="margin:0; font-size: 14px;">OpenRouter API Configuration</h4>
+                    <p style="margin:2px 0 0; font-size: 11px; color: var(--text-muted);">Enter your key to use AI
+                        features</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="password" id="openRouterKey" placeholder="sk-or-v1-..."
+                    style="padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; width: 250px;">
+                <button class="ai-btn blue" style="margin:0; padding: 8px 16px; width: auto;"
+                    onclick="saveApiKey()">Save Key</button>
+            </div>
+        </div>
+
         <div class="page-grid">
 
             <!-- ========== COL 1 ========== -->
@@ -499,6 +517,27 @@
         let selectedQuizSubject = "";
 
         // =============================================
+        // KEY MANAGEMENT
+        // =============================================
+        function saveApiKey() {
+            const key = document.getElementById("openRouterKey").value.trim();
+            if (key) {
+                localStorage.setItem("openRouterKey", key);
+                alert("✅ API Key saved locally!");
+            } else {
+                localStorage.removeItem("openRouterKey");
+                alert("🗑 API Key cleared. System will use default server key.");
+            }
+        }
+
+        function getApiKey() {
+            return localStorage.getItem("openRouterKey") || "";
+        }
+
+        // Initialize key in input
+        document.getElementById("openRouterKey").value = getApiKey();
+
+        // =============================================
         // LOAD SUBJECTS
         // =============================================
         async function loadSubjects() {
@@ -540,14 +579,30 @@
         // =============================================
         async function aiPost(endpoint, body) {
             try {
+                const headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token()
+                };
+
+                const userKey = getApiKey();
+                if (userKey) {
+                    headers["X-OpenRouter-Key"] = userKey;
+                }
+
                 const res = await fetch(BASE + endpoint, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token() },
+                    headers: headers,
                     body: JSON.stringify(body)
                 });
+
                 const json = await res.json();
                 json._ok = res.ok;
-                if (res.status === 401) { localStorage.clear(); window.location.href = "login.html"; }
+
+                // If 401 but NOT from OpenRouter, it's a JWT session error
+                if (res.status === 401 && !json.message?.includes("OpenRouter")) {
+                    localStorage.clear();
+                    window.location.href = "login.html";
+                }
                 return json;
             } catch (e) {
                 return { _ok: false, message: "Network error: " + e.message };

@@ -41,7 +41,12 @@ class AIService:
             timeout=30
         )
 
-        if response.status_code != 200:
+        if response.status_code == 401:
+            raise RuntimeError(
+                "OpenRouter API Key is invalid or expired (401). "
+                "Please check your API Key in the configuration bar at the top of the AI page."
+            )
+        elif response.status_code != 200:
             raise RuntimeError(
                 f"OpenRouter returned {response.status_code}. "
                 f"Check your API key and try again."
